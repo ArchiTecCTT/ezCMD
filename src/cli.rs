@@ -98,7 +98,8 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Invocation, CliError> {
     // Check for --uninstall before bare `--`
     let has_uninstall = args[..pre_dash_limit]
         .iter()
-        .any(|a| a.as_ref() == "--uninstall");
+        .any(|a| a.as_ref() == "--uninstall" || a.as_ref() == "--unintall");
+
     if has_uninstall {
         let yes = args[..pre_dash_limit]
             .iter()

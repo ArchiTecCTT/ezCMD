@@ -4,10 +4,10 @@ expression: output
 ---
  [90m___[[0m [1;36mCloning a Repo[0m [90m]______________________________________[90m|[0m
 [90m|                                                           [90m|[0m
-[90m|[0m  [1mgit clone [0m[33m<repo-url>[0m                                     [90m|[0m
+[90m|[0m  [1;38;2;150;208;251mgit clone [0m[33m<repo-url>[0m                                     [90m|[0m
 [90m|      ---[0m Clones a remote repository into a new folder     [90m|[0m
-[90m|[0m  [1mgit clone [0m[33m<repo-url>[0m[1m [0m[33m<folder>[0m                            [90m|[0m
+[90m|[0m  [1;38;2;150;208;251mgit clone [0m[33m<repo-url>[0m[1;38;2;150;208;251m [0m[33m<folder>[0m                            [90m|[0m
 [90m|      ---[0m Clones a repository into a specified folder      [90m|[0m
-[90m|[0m  [1mgit clone --depth 1 [0m[33m<repo-url>[0m                           [90m|[0m
+[90m|[0m  [1;38;2;150;208;251mgit clone --depth 1 [0m[33m<repo-url>[0m                           [90m|[0m
 [90m|      ---[0m Clones only the latest commit for a shallow copy [90m|[0m
 [90m|___________________________________________________________|[0m

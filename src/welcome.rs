@@ -2,16 +2,27 @@ use crate::term;
 use std::io::{self, Write};
 use std::path::PathBuf;
 
-pub const ASCII_ART: &str = r#"
-                      /$$$$$$  /$$      /$$ /$$$$$$$ 
-                     /$$__  $$| $$$    /$$$| $$__  $$
-  /$$$$$$  /$$$$$$$$| $$  \__/| $$$$  /$$$$| $$  \ $$
- /$$__  $$|____ /$$/| $$      | $$ $$/$$ $$| $$  | $$
-| $$$$$$$$   /$$$$/ | $$      | $$  $$$| $$| $$  | $$
-| $$_____/  /$$__/  | $$    $$| $$\  $ | $$| $$  | $$
-|  $$$$$$$ /$$$$$$$$|  $$$$$$/| $$ \/  | $$| $$$$$$$/
- \_______/|________/ \______/ |__/     |__/|_______/ 
-"#;
+pub const ASCII_LINES: [&str; 8] = [
+    r"                      /$$$$$$  /$$      /$$ /$$$$$$$ ",
+    r"                     /$$__  $$| $$$    /$$$| $$__  $$",
+    r"  /$$$$$$  /$$$$$$$$| $$  \__/| $$$$  /$$$$| $$  \ $$",
+    r" /$$__  $$|____ /$$/| $$      | $$ $$/$$ $$| $$  | $$",
+    r"| $$$$$$$$   /$$$$/ | $$      | $$  $$$| $$| $$  | $$",
+    r"| $$_____/  /$$__/  | $$    $$| $$\  $ | $$| $$  | $$",
+    r"|  $$$$$$$ /$$$$$$$$|  $$$$$$/| $$ \/  | $$| $$$$$$$/",
+    r" \_______/|________/ \______/ |__/     |__/|_______/ ",
+];
+
+const GRADIENT: [&str; 8] = [
+    "\x1b[1;38;2;150;208;251m", // #96d0fb (Ice blue)
+    "\x1b[1;38;2;130;195;252m",
+    "\x1b[1;38;2;110;180;253m",
+    "\x1b[1;38;2;90;165;254m",
+    "\x1b[1;38;2;115;150;255m",
+    "\x1b[1;38;2;140;135;255m",
+    "\x1b[1;38;2;170;120;255m",
+    "\x1b[1;38;2;200;110;255m", // Electric violet
+];
 
 pub fn get_config_dir() -> Option<PathBuf> {
     if let Some(xdg) = std::env::var_os("XDG_CONFIG_HOME") {
@@ -120,72 +131,111 @@ pub fn run_install<W: Write>(w: &mut W, color: bool) -> io::Result<i32> {
 
 pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
     if color {
-        writeln!(
-            w,
-            "{}{}{}",
-            term::CYAN_BOLD,
-            ASCII_ART.trim_matches('\n'),
-            term::RESET
-        )?;
+        for (i, line) in ASCII_LINES.iter().enumerate() {
+            writeln!(w, "{}{}{}", GRADIENT[i], line, term::RESET)?;
+        }
         writeln!(w)?;
         writeln!(
             w,
-            "  {}Welcome to ezCMD!{} Find the right command, in order.",
+            "  {}Welcome to ezCMD!{} {}Type what you want to do. Get the commands, in order.{}",
             term::BOLD,
+            term::RESET,
+            term::CMD_COLOR,
             term::RESET
         )?;
         writeln!(
             w,
-            "  Never browse Stack Overflow for everyday terminal commands again.\n"
+            "  {}Fast, offline terminal cheatsheet with zero telemetry — commands in < 15ms.{}\n",
+            term::DIM,
+            term::RESET
+        )?;
+
+        const C_CYAN: &str = "\x1b[1;36m";
+        const C_YELLOW: &str = "\x1b[1;33m";
+        const C_MAGENTA: &str = "\x1b[1;38;2;215;135;255m";
+
+        writeln!(
+            w,
+            "  {}+-- [ 🚀 QUICK START / HOW TO USE ] ------------------------------------+{}",
+            C_CYAN,
+            term::RESET
+        )?;
+        writeln!(
+            w,
+            "  {}|{}  {}ezcmd <query>{}            {}---{} Search for any command or workflow       {}|{}",
+            C_CYAN, term::RESET, term::CMD_COLOR, term::RESET, term::DIM, term::RESET, C_CYAN, term::RESET
+        )?;
+        writeln!(
+            w,
+            "  {}|{}  {}ezcmd --help{}             {}---{} Explore all sections for your current OS {}|{}",
+            C_CYAN, term::RESET, term::CMD_COLOR, term::RESET, term::DIM, term::RESET, C_CYAN, term::RESET
+        )?;
+        writeln!(
+            w,
+            "  {}|{}  {}ezcmd --help -git{}        {}---{} View Git workflow cheat sheet            {}|{}",
+            C_CYAN, term::RESET, term::CMD_COLOR, term::RESET, term::DIM, term::RESET, C_CYAN, term::RESET
+        )?;
+        writeln!(
+            w,
+            "  {}|{}  {}ezcmd --help -shell{}      {}---{} View Shell commands & filesystem         {}|{}",
+            C_CYAN, term::RESET, term::CMD_COLOR, term::RESET, term::DIM, term::RESET, C_CYAN, term::RESET
+        )?;
+        writeln!(
+            w,
+            "  {}|{}  {}ezcmd --uninstall{}        {}---{} Uninstall ezcmd from your system         {}|{}",
+            C_CYAN, term::RESET, term::CMD_COLOR, term::RESET, term::DIM, term::RESET, C_CYAN, term::RESET
+        )?;
+        writeln!(
+            w,
+            "  {}+------------------------------------------------------------------------+{}\n",
+            C_CYAN,
+            term::RESET
         )?;
 
         writeln!(
             w,
-            "  {}QUICK START / HOW TO USE:{}",
-            term::CYAN_BOLD,
+            "  {}⚡ POPULAR WORKFLOWS TO TRY:{}",
+            C_YELLOW,
             term::RESET
         )?;
         writeln!(
             w,
-            "    {}ezcmd <query>{}                   Search for workflows or commands",
-            term::BOLD,
+            "    {}ezcmd{} initializing repo       {}# Starting a new Git repo{}",
+            term::CMD_COLOR,
+            term::RESET,
+            term::DIM,
             term::RESET
         )?;
         writeln!(
             w,
-            "    {}ezcmd --help{}                    Show all sections for your OS",
-            term::BOLD,
+            "    {}ezcmd{} undo last commit         {}# Safely revert commits{}",
+            term::CMD_COLOR,
+            term::RESET,
+            term::DIM,
             term::RESET
         )?;
         writeln!(
             w,
-            "    {}ezcmd --help -git{}               Show Git workflow cheatsheet",
-            term::BOLD,
+            "    {}ezcmd{} how to branch            {}# Branching & merging workflows{}",
+            term::CMD_COLOR,
+            term::RESET,
+            term::DIM,
             term::RESET
         )?;
         writeln!(
             w,
-            "    {}ezcmd --help -shell{}             Show Shell command cheatsheet",
-            term::BOLD,
-            term::RESET
-        )?;
-        writeln!(
-            w,
-            "    {}ezcmd --uninstall{}               Uninstall ezcmd from your machine",
-            term::BOLD,
+            "    {}ezcmd{} delete files             {}# File & directory cleanup{}",
+            term::CMD_COLOR,
+            term::RESET,
+            term::DIM,
             term::RESET
         )?;
         writeln!(w)?;
-        writeln!(w, "  {}TRY THESE QUERIES:{}", term::CYAN_BOLD, term::RESET)?;
-        writeln!(w, "    ezcmd initializing repo")?;
-        writeln!(w, "    ezcmd undo last commit")?;
-        writeln!(w, "    ezcmd how to branch")?;
-        writeln!(w, "    ezcmd delete files")?;
-        writeln!(w)?;
-        writeln!(w, "  {}AUTHOR & CREDITS:{}", term::CYAN_BOLD, term::RESET)?;
+
+        writeln!(w, "  {}✨ AUTHOR & COMMUNITY:{}", C_MAGENTA, term::RESET)?;
         writeln!(
             w,
-            "    Created by {}ItzEvhyx{} (Me)",
+            "    Created with ❤️  by {}ItzEvhyx{} (Me)",
             term::BOLD,
             term::RESET
         )?;
@@ -197,51 +247,75 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
         )?;
         writeln!(
             w,
-            "    Repo:   {}https://github.com/ItzEvhyx/ezcmd{}",
+            "    Repo:   {}https://github.com/ItzEvhyx/ezCMD{}\n",
             term::UNDERLINE,
             term::RESET
         )?;
     } else {
-        writeln!(w, "{}", ASCII_ART.trim_matches('\n'))?;
+        for line in ASCII_LINES {
+            writeln!(w, "{}", line)?;
+        }
         writeln!(w)?;
-        writeln!(w, "  Welcome to ezCMD! Find the right command, in order.")?;
         writeln!(
             w,
-            "  Never browse Stack Overflow for everyday terminal commands again.\n"
+            "  Welcome to ezCMD! Type what you want to do. Get the commands, in order."
+        )?;
+        writeln!(
+            w,
+            "  Fast, offline terminal cheatsheet with zero telemetry — commands in < 15ms.\n"
         )?;
 
-        writeln!(w, "  QUICK START / HOW TO USE:")?;
         writeln!(
             w,
-            "    ezcmd <query>                   Search for workflows or commands"
+            "  +-- [ QUICK START / HOW TO USE ] ----------------------------------------+"
         )?;
         writeln!(
             w,
-            "    ezcmd --help                    Show all sections for your OS"
+            "  |  ezcmd <query>            --- Search for any command or workflow       |"
         )?;
         writeln!(
             w,
-            "    ezcmd --help -git               Show Git workflow cheatsheet"
+            "  |  ezcmd --help             --- Explore all sections for your current OS |"
         )?;
         writeln!(
             w,
-            "    ezcmd --help -shell             Show Shell command cheatsheet"
+            "  |  ezcmd --help -git        --- View Git workflow cheat sheet            |"
         )?;
         writeln!(
             w,
-            "    ezcmd --uninstall               Uninstall ezcmd from your machine"
+            "  |  ezcmd --help -shell      --- View Shell commands & filesystem         |"
         )?;
-        writeln!(w)?;
-        writeln!(w, "  TRY THESE QUERIES:")?;
-        writeln!(w, "    ezcmd initializing repo")?;
-        writeln!(w, "    ezcmd undo last commit")?;
-        writeln!(w, "    ezcmd how to branch")?;
-        writeln!(w, "    ezcmd delete files")?;
-        writeln!(w)?;
-        writeln!(w, "  AUTHOR & CREDITS:")?;
-        writeln!(w, "    Created by ItzEvhyx (Me)")?;
+        writeln!(
+            w,
+            "  |  ezcmd --uninstall        --- Uninstall ezcmd from your system         |"
+        )?;
+        writeln!(
+            w,
+            "  +------------------------------------------------------------------------+\n"
+        )?;
+
+        writeln!(w, "  POPULAR WORKFLOWS TO TRY:")?;
+        writeln!(
+            w,
+            "    ezcmd initializing repo       # Starting a new Git repo"
+        )?;
+        writeln!(
+            w,
+            "    ezcmd undo last commit         # Safely revert commits"
+        )?;
+        writeln!(
+            w,
+            "    ezcmd how to branch            # Branching & merging workflows"
+        )?;
+        writeln!(
+            w,
+            "    ezcmd delete files             # File & directory cleanup\n"
+        )?;
+
+        writeln!(w, "  AUTHOR & COMMUNITY:")?;
+        writeln!(w, "    Created with ❤️  by ItzEvhyx (Me)")?;
         writeln!(w, "    GitHub: https://github.com/ItzEvhyx")?;
-        writeln!(w, "    Repo:   https://github.com/ItzEvhyx/ezcmd")?;
+        writeln!(w, "    Repo:   https://github.com/ItzEvhyx/ezCMD\n")?;
     }
     Ok(())
 }

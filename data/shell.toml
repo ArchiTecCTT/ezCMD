@@ -201,9 +201,19 @@ aliases = ["env variables", "show path", "set variable", "export variable", "pri
 
 [[section]]
 title   = "Uninstalling ezcmd"
-aliases = ["uninstall ezcmd", "remove ezcmd", "delete ezcmd", "uninstall tool", "uninstall"]
+aliases = [
+  "uninstall ezcmd",
+  "remove ezcmd",
+  "delete ezcmd",
+  "uninstall tool",
+  "uninstall",
+  "unintall",
+  "remove tool",
+  "delete tool",
+]
 
   [[section.command]]
   note = "Uninstalls ezcmd from your system"
   cmd  = "ezcmd --uninstall"
+
 

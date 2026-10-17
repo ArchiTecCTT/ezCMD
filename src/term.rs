@@ -6,6 +6,7 @@ pub const CYAN_BOLD: &str = "\x1b[1;36m";
 pub const YELLOW: &str = "\x1b[33m";
 pub const RED_BOLD: &str = "\x1b[1;31m";
 pub const UNDERLINE: &str = "\x1b[4m";
+pub const CMD_COLOR: &str = "\x1b[1;38;2;150;208;251m";
 pub const RESET: &str = "\x1b[0m";
 
 #[cfg(windows)]
@@ -67,6 +68,7 @@ mod tests {
         assert_eq!(YELLOW, "\x1b[33m");
         assert_eq!(RED_BOLD, "\x1b[1;31m");
         assert_eq!(UNDERLINE, "\x1b[4m");
+        assert_eq!(CMD_COLOR, "\x1b[1;38;2;150;208;251m");
         assert_eq!(RESET, "\x1b[0m");
     }
 }

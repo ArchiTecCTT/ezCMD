@@ -20,17 +20,17 @@ impl Default for RenderCtx {
     }
 }
 
-/// Helper to color command text, highlighting placeholders `<...>` in yellow.
+/// Helper to color command text in #96d0fb, highlighting placeholders `<...>` in yellow.
 fn colorize_command(cmd_text: &str) -> String {
     let mut out = String::new();
     let mut in_placeholder = false;
-    let mut in_bold = false;
+    let mut in_cmd = false;
 
     for c in cmd_text.chars() {
         if c == '<' {
-            if in_bold {
+            if in_cmd {
                 out.push_str(term::RESET);
-                in_bold = false;
+                in_cmd = false;
             }
             out.push_str(term::YELLOW);
             out.push('<');
@@ -42,14 +42,14 @@ fn colorize_command(cmd_text: &str) -> String {
         } else if in_placeholder {
             out.push(c);
         } else {
-            if !in_bold {
-                out.push_str(term::BOLD);
-                in_bold = true;
+            if !in_cmd {
+                out.push_str(term::CMD_COLOR);
+                in_cmd = true;
             }
             out.push(c);
         }
     }
-    if in_bold || in_placeholder {
+    if in_cmd || in_placeholder {
         out.push_str(term::RESET);
     }
     out
@@ -323,7 +323,7 @@ mod tests {
     fn test_colorize_command() {
         let plain = "git clone <url>";
         let colored = colorize_command(plain);
-        assert!(colored.contains(term::BOLD));
+        assert!(colored.contains(term::CMD_COLOR));
         assert!(colored.contains(term::YELLOW));
         assert!(colored.contains("<url>"));
     }

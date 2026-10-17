@@ -3,15 +3,32 @@ use std::io::{self, IsTerminal, Write};
 use std::path::PathBuf;
 
 pub fn run_uninstall<W: Write>(w: &mut W, yes: bool) -> io::Result<i32> {
-    if !yes && io::stdin().is_terminal() {
-        print!("Are you sure you want to uninstall ezcmd from your machine? [y/N]: ");
-        io::stdout().flush()?;
-        let mut line = String::new();
-        io::stdin().read_line(&mut line)?;
-        let trimmed = line.trim();
-        if !trimmed.eq_ignore_ascii_case("y") && !trimmed.eq_ignore_ascii_case("yes") {
-            writeln!(w, "Uninstall aborted.")?;
-            return Ok(0);
+    if !yes {
+        if io::stdin().is_terminal() {
+            print!("Are you sure you want to uninstall ezcmd from your machine? [y/N]: ");
+            io::stdout().flush()?;
+            let mut line = String::new();
+            io::stdin().read_line(&mut line)?;
+            let trimmed = line.trim();
+            if !trimmed.eq_ignore_ascii_case("y") && !trimmed.eq_ignore_ascii_case("yes") {
+                writeln!(w, "Uninstall aborted.")?;
+                return Ok(0);
+            }
+        } else {
+            let mut line = String::new();
+            if io::stdin().read_line(&mut line).is_ok() && !line.trim().is_empty() {
+                let trimmed = line.trim();
+                if !trimmed.eq_ignore_ascii_case("y") && !trimmed.eq_ignore_ascii_case("yes") {
+                    writeln!(w, "Uninstall aborted.")?;
+                    return Ok(0);
+                }
+            } else {
+                writeln!(
+                    w,
+                    "Uninstall requires confirmation. Pass '-y' or '--yes' to proceed non-interactively."
+                )?;
+                return Ok(1);
+            }
         }
     }
 
