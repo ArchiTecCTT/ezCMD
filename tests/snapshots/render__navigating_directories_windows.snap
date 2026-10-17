@@ -2,11 +2,14 @@
 source: tests/render.rs
 expression: out_win
 ---
- ___[ Navigating Directories ]______________________________
+ ___[ Navigating Directories ]_________________________________________
 |
-|  cd           --- Shows current working directory
-|  cd <folder>  --- Changes to specified folder
-|  cd ..        --- Moves up to parent folder
-|  cd \         --- Moves to root directory
-|  cls          --- Clears the terminal screen
-|___________________________________________________________
+|  cd                 --- Shows current working directory
+|  cd <folder>        --- Changes to specified folder
+|  cd ..              --- Moves up to parent folder
+|  cd \               --- Moves to root directory
+|  cd /d D:\<folder>  --- Switches active drive and enters folder
+|  dir                --- Lists files and details in directory
+|  tree               --- Displays graphical directory tree structure
+|  cls                --- Clears the terminal screen
+|______________________________________________________________________

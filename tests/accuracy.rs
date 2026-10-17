@@ -118,15 +118,15 @@ fn test_query_accuracy() {
         }
     }
 
-    // Report and check baseline accuracy
+    // Enforce full PRD accuracy gates (Section 8.5)
     assert!(
-        top1_rate >= 80.0,
-        "Top-1 rate {:.2}% below expected baseline",
+        top1_rate >= 90.0,
+        "Top-1 rate {:.2}% below expected 90.0% target",
         top1_rate
     );
     assert!(
-        top3_rate >= 90.0,
-        "Top-3 rate {:.2}% below expected baseline",
+        top3_rate >= 98.0,
+        "Top-3 rate {:.2}% below expected 98.0% target",
         top3_rate
     );
 }

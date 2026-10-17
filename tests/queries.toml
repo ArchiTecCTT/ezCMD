@@ -1,7 +1,33 @@
-# Seed queries for M3 accuracy testing (≥ 30 phrasings)
+# Comprehensive accuracy test queries (≥ 100 phrasings)
+
+# --- 1. Setup & Config ---
+[[q]]
+query  = "setup and config"
+expect = "Setup & Config"
 
 [[q]]
-query  = "initializing repo"
+query  = "git config"
+expect = "Setup & Config"
+
+[[q]]
+query  = "set username"
+expect = "Setup & Config"
+
+[[q]]
+query  = "set email"
+expect = "Setup & Config"
+
+[[q]]
+query  = "configure git"
+expect = "Setup & Config"
+
+[[q]]
+query  = "git config --global"
+expect = "Setup & Config"
+
+# --- 2. Initializing a Repo ---
+[[q]]
+query  = "initializing a repo"
 expect = "Initializing a Repo"
 
 [[q]]
@@ -44,8 +70,9 @@ expect = "Initializing a Repo"
 query  = "git remote add origin"
 expect = "Initializing a Repo"
 
+# --- 3. Cloning a Repo ---
 [[q]]
-query  = "cloning repo"
+query  = "cloning a repo"
 expect = "Cloning a Repo"
 
 [[q]]
@@ -58,6 +85,10 @@ expect = "Cloning a Repo"
 
 [[q]]
 query  = "checkout repo"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "download project"
 expect = "Cloning a Repo"
 
 [[q]]
@@ -76,6 +107,276 @@ expect = "Cloning a Repo"
 query  = "clon repo"
 expect = "Cloning a Repo"
 
+# --- 4. Daily Workflow ---
+[[q]]
+query  = "daily workflow"
+expect = "Daily Workflow"
+
+[[q]]
+query  = "save changes"
+expect = "Daily Workflow"
+
+[[q]]
+query  = "commit changes"
+expect = "Daily Workflow"
+
+[[q]]
+query  = "push code"
+expect = "Daily Workflow"
+
+[[q]]
+query  = "git status"
+expect = "Daily Workflow"
+
+[[q]]
+query  = "git add"
+expect = "Daily Workflow"
+
+[[q]]
+query  = "git commit -m"
+expect = "Daily Workflow"
+
+[[q]]
+query  = "git pull"
+expect = "Daily Workflow"
+
+# --- 5. Branching ---
+[[q]]
+query  = "branching"
+expect = "Branching"
+
+[[q]]
+query  = "create branch"
+expect = "Branching"
+
+[[q]]
+query  = "switch branch"
+expect = "Branching"
+
+[[q]]
+query  = "manage branches"
+expect = "Branching"
+
+[[q]]
+query  = "new branch"
+expect = "Branching"
+
+[[q]]
+query  = "list branches"
+expect = "Branching"
+
+[[q]]
+query  = "git switch -c"
+expect = "Branching"
+
+[[q]]
+query  = "git branch -d"
+expect = "Branching"
+
+[[q]]
+query  = "git merge"
+expect = "Branching"
+
+# --- 6. Remotes ---
+[[q]]
+query  = "remotes"
+expect = "Remotes"
+
+[[q]]
+query  = "git remotes"
+expect = "Remotes"
+
+[[q]]
+query  = "manage remotes"
+expect = "Remotes"
+
+[[q]]
+query  = "add remote"
+expect = "Remotes"
+
+[[q]]
+query  = "git remote -v"
+expect = "Remotes"
+
+[[q]]
+query  = "git fetch"
+expect = "Remotes"
+
+# --- 7. Undo & Rollback ---
+[[q]]
+query  = "undo and rollback"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "undo commit"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "reset --hard"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "rollback changes"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "revert commit"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "unstage file"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "discard changes"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "git restore"
+expect = "Undo & Rollback"
+
+[[q]]
+query  = "git reset --hard HEAD~1"
+expect = "Undo & Rollback"
+
+# --- 8. Stash ---
+[[q]]
+query  = "stash"
+expect = "Stash"
+
+[[q]]
+query  = "git stash"
+expect = "Stash"
+
+[[q]]
+query  = "save work"
+expect = "Stash"
+
+[[q]]
+query  = "stash changes"
+expect = "Stash"
+
+[[q]]
+query  = "pop stash"
+expect = "Stash"
+
+[[q]]
+query  = "git stash pop"
+expect = "Stash"
+
+[[q]]
+query  = "git stash list"
+expect = "Stash"
+
+# --- 9. Tags ---
+[[q]]
+query  = "tags"
+expect = "Tags"
+
+[[q]]
+query  = "git tags"
+expect = "Tags"
+
+[[q]]
+query  = "create tag"
+expect = "Tags"
+
+[[q]]
+query  = "release tag"
+expect = "Tags"
+
+[[q]]
+query  = "list tags"
+expect = "Tags"
+
+[[q]]
+query  = "git tag -a"
+expect = "Tags"
+
+[[q]]
+query  = "push tags"
+expect = "Tags"
+
+# --- 10. History & Diff ---
+[[q]]
+query  = "history and diff"
+expect = "History & Diff"
+
+[[q]]
+query  = "git log"
+expect = "History & Diff"
+
+[[q]]
+query  = "git diff"
+expect = "History & Diff"
+
+[[q]]
+query  = "view commits"
+expect = "History & Diff"
+
+[[q]]
+query  = "check history"
+expect = "History & Diff"
+
+[[q]]
+query  = "compare changes"
+expect = "History & Diff"
+
+[[q]]
+query  = "git blame"
+expect = "History & Diff"
+
+# --- 11. Cleanup & Maintenance ---
+[[q]]
+query  = "cleanup and maintenance"
+expect = "Cleanup & Maintenance"
+
+[[q]]
+query  = "git cleanup"
+expect = "Cleanup & Maintenance"
+
+[[q]]
+query  = "clean untracked"
+expect = "Cleanup & Maintenance"
+
+[[q]]
+query  = "prune branches"
+expect = "Cleanup & Maintenance"
+
+[[q]]
+query  = "git clean -fd"
+expect = "Cleanup & Maintenance"
+
+[[q]]
+query  = "git gc"
+expect = "Cleanup & Maintenance"
+
+# --- 12. Finding a Bad Commit (bisect) ---
+[[q]]
+query  = "finding a bad commit"
+expect = "Finding a Bad Commit (bisect)"
+
+[[q]]
+query  = "git bisect"
+expect = "Finding a Bad Commit (bisect)"
+
+[[q]]
+query  = "find bug"
+expect = "Finding a Bad Commit (bisect)"
+
+[[q]]
+query  = "binary search commit"
+expect = "Finding a Bad Commit (bisect)"
+
+[[q]]
+query  = "find bad commit"
+expect = "Finding a Bad Commit (bisect)"
+
+[[q]]
+query  = "git bisect start"
+expect = "Finding a Bad Commit (bisect)"
+
+# --- 13. Navigating Directories ---
 [[q]]
 query  = "navigating directories"
 expect = "Navigating Directories"
@@ -116,6 +417,15 @@ expect = "Navigating Directories"
 os     = "linux"
 
 [[q]]
+query  = "tree"
+expect = "Navigating Directories"
+
+# --- 14. Creating Folders & Files ---
+[[q]]
+query  = "creating folders and files"
+expect = "Creating Folders & Files"
+
+[[q]]
 query  = "create folder"
 expect = "Creating Folders & Files"
 
@@ -139,3 +449,211 @@ expect = "Creating Folders & Files"
 query  = "touch"
 expect = "Creating Folders & Files"
 os     = "linux"
+
+# --- 15. Removing Folders & Files ---
+[[q]]
+query  = "removing folders and files"
+expect = "Removing Folders & Files"
+
+[[q]]
+query  = "delete folder"
+expect = "Removing Folders & Files"
+
+[[q]]
+query  = "remove directory"
+expect = "Removing Folders & Files"
+
+[[q]]
+query  = "delete file"
+expect = "Removing Folders & Files"
+
+[[q]]
+query  = "remove files"
+expect = "Removing Folders & Files"
+
+[[q]]
+query  = "rmdir /s /q"
+expect = "Removing Folders & Files"
+os     = "windows"
+
+[[q]]
+query  = "rm -rf"
+expect = "Removing Folders & Files"
+os     = "unix"
+
+# --- 16. Copying, Moving & Renaming ---
+[[q]]
+query  = "copying moving and renaming"
+expect = "Copying, Moving & Renaming"
+
+[[q]]
+query  = "copy file"
+expect = "Copying, Moving & Renaming"
+
+[[q]]
+query  = "move file"
+expect = "Copying, Moving & Renaming"
+
+[[q]]
+query  = "rename file"
+expect = "Copying, Moving & Renaming"
+
+[[q]]
+query  = "copy directory"
+expect = "Copying, Moving & Renaming"
+
+# --- 17. Viewing File Contents ---
+[[q]]
+query  = "viewing file contents"
+expect = "Viewing File Contents"
+
+[[q]]
+query  = "view file"
+expect = "Viewing File Contents"
+
+[[q]]
+query  = "cat file"
+expect = "Viewing File Contents"
+
+[[q]]
+query  = "read file"
+expect = "Viewing File Contents"
+
+[[q]]
+query  = "search in file"
+expect = "Viewing File Contents"
+
+[[q]]
+query  = "grep"
+expect = "Viewing File Contents"
+os     = "unix"
+
+[[q]]
+query  = "findstr"
+expect = "Viewing File Contents"
+os     = "windows"
+
+# --- 18. System Info ---
+[[q]]
+query  = "system info"
+expect = "System Info"
+
+[[q]]
+query  = "os version"
+expect = "System Info"
+
+[[q]]
+query  = "check hostname"
+expect = "System Info"
+
+[[q]]
+query  = "whoami"
+expect = "System Info"
+
+[[q]]
+query  = "uname -a"
+expect = "System Info"
+os     = "linux"
+
+[[q]]
+query  = "sw_vers"
+expect = "System Info"
+os     = "macos"
+
+# --- 19. Networking ---
+[[q]]
+query  = "networking"
+expect = "Networking"
+
+[[q]]
+query  = "network info"
+expect = "Networking"
+
+[[q]]
+query  = "check ip"
+expect = "Networking"
+
+[[q]]
+query  = "ipconfig"
+expect = "Networking"
+os     = "windows"
+
+[[q]]
+query  = "ip addr"
+expect = "Networking"
+os     = "linux"
+
+[[q]]
+query  = "ping host"
+expect = "Networking"
+
+[[q]]
+query  = "dns lookup"
+expect = "Networking"
+
+[[q]]
+query  = "open ports"
+expect = "Networking"
+
+[[q]]
+query  = "traceroute"
+expect = "Networking"
+os     = "unix"
+
+# --- 20. Processes ---
+[[q]]
+query  = "processes"
+expect = "Processes"
+
+[[q]]
+query  = "list processes"
+expect = "Processes"
+
+[[q]]
+query  = "kill process"
+expect = "Processes"
+
+[[q]]
+query  = "stop task"
+expect = "Processes"
+
+[[q]]
+query  = "ps aux"
+expect = "Processes"
+os     = "unix"
+
+[[q]]
+query  = "tasklist"
+expect = "Processes"
+os     = "windows"
+
+[[q]]
+query  = "kill -9"
+expect = "Processes"
+os     = "unix"
+
+# --- 21. Environment Variables ---
+[[q]]
+query  = "environment variables"
+expect = "Environment Variables"
+
+[[q]]
+query  = "env variables"
+expect = "Environment Variables"
+
+[[q]]
+query  = "show path"
+expect = "Environment Variables"
+
+[[q]]
+query  = "set variable"
+expect = "Environment Variables"
+
+[[q]]
+query  = "export variable"
+expect = "Environment Variables"
+
+[[q]]
+query  = "printenv"
+expect = "Environment Variables"
+os     = "unix"

@@ -2,7 +2,7 @@ tool = "shell"
 
 [[section]]
 title   = "Navigating Directories"
-aliases = ["change directory", "cd commands", "switch directory", "navigate folders"]
+aliases = ["change directory", "cd commands", "switch directory", "navigate folders", "list files"]
 
   [[section.command]]
   note    = "Shows current working directory"
@@ -23,13 +23,26 @@ aliases = ["change directory", "cd commands", "switch directory", "navigate fold
   unix    = "cd /"
 
   [[section.command]]
+  note    = "Switches active drive and enters folder"
+  windows = "cd /d D:\\<folder>"
+
+  [[section.command]]
+  note    = "Lists files and details in directory"
+  windows = "dir"
+  unix    = "ls -la"
+
+  [[section.command]]
+  note = "Displays graphical directory tree structure"
+  cmd  = "tree"
+
+  [[section.command]]
   note    = "Clears the terminal screen"
   windows = "cls"
   unix    = "clear"
 
 [[section]]
 title   = "Creating Folders & Files"
-aliases = ["create folder", "make file", "create file", "new folder"]
+aliases = ["create folder", "make file", "create file", "new folder", "touch file"]
 
   [[section.command]]
   note = "Creates a new folder"
@@ -58,3 +71,130 @@ aliases = ["delete folder", "remove directory", "delete file", "remove files"]
   windows = "del <file>"
   unix    = "rm <file>"
 
+[[section]]
+title   = "Copying, Moving & Renaming"
+aliases = ["copy file", "move file", "rename file", "copy directory", "transfer files"]
+
+  [[section.command]]
+  note    = "Copies a file to a new destination"
+  windows = "copy <src> <dest>"
+  unix    = "cp <src> <dest>"
+
+  [[section.command]]
+  note    = "Copies a folder and all subfolders"
+  windows = "xcopy <src> <dest> /e /i"
+  unix    = "cp -r <src> <dest>"
+
+  [[section.command]]
+  note    = "Moves a file to a new destination"
+  windows = "move <src> <dest>"
+  unix    = "mv <src> <dest>"
+
+  [[section.command]]
+  note    = "Renames a file or folder"
+  windows = "ren <old> <new>"
+  unix    = "mv <old> <new>"
+
+[[section]]
+title   = "Viewing File Contents"
+aliases = ["view file", "cat file", "read file", "search in file", "print file content"]
+
+  [[section.command]]
+  note    = "Outputs entire content of a file"
+  windows = "type <file>"
+  unix    = "cat <file>"
+
+  [[section.command]]
+  note    = "Displays file content one screen at a time"
+  windows = "more <file>"
+  unix    = "less <file>"
+
+  [[section.command]]
+  note    = "Searches for matching text within a file"
+  windows = "findstr \"text\" <file>"
+  unix    = "grep \"text\" <file>"
+
+[[section]]
+title   = "System Info"
+aliases = ["system info", "os version", "check hostname", "whoami", "system specs"]
+
+  [[section.command]]
+  note    = "Displays operating system version information"
+  windows = "ver"
+  linux   = "uname -a"
+  macos   = "sw_vers"
+
+  [[section.command]]
+  note = "Shows current system host name"
+  cmd  = "hostname"
+
+  [[section.command]]
+  note = "Displays username of active user"
+  cmd  = "whoami"
+
+[[section]]
+title   = "Networking"
+aliases = ["network info", "check ip", "ping host", "dns lookup", "open ports", "traceroute"]
+
+  [[section.command]]
+  note    = "Displays active network interfaces and IP addresses"
+  windows = "ipconfig"
+  linux   = "ip addr"
+  macos   = "ifconfig"
+
+  [[section.command]]
+  note = "Tests network connectivity to a remote host"
+  cmd  = "ping <host>"
+
+  [[section.command]]
+  note    = "Traces network route packets take to destination"
+  windows = "tracert <host>"
+  unix    = "traceroute <host>"
+
+  [[section.command]]
+  note = "Queries DNS records for domain name"
+  cmd  = "nslookup <domain>"
+
+  [[section.command]]
+  note    = "Lists listening ports and active network connections"
+  windows = "netstat -ano"
+  linux   = "ss -tulpn"
+  macos   = "lsof -i -P"
+
+[[section]]
+title   = "Processes"
+aliases = ["list processes", "kill process", "stop task", "terminate process", "task manager"]
+
+  [[section.command]]
+  note    = "Lists all running processes on the system"
+  windows = "tasklist"
+  unix    = "ps aux"
+
+  [[section.command]]
+  note    = "Forcibly terminates a process by PID"
+  windows = "taskkill /PID <pid> /F"
+  unix    = "kill -9 <pid>"
+
+  [[section.command]]
+  note    = "Forcibly terminates processes by program name"
+  windows = "taskkill /IM <name.exe> /F"
+  unix    = "pkill -9 <name>"
+
+[[section]]
+title   = "Environment Variables"
+aliases = ["env variables", "show path", "set variable", "export variable", "printenv"]
+
+  [[section.command]]
+  note    = "Prints all current environment variables"
+  windows = "set"
+  unix    = "printenv"
+
+  [[section.command]]
+  note    = "Displays configured executable search paths"
+  windows = "echo %PATH%"
+  unix    = "echo $PATH"
+
+  [[section.command]]
+  note    = "Sets an environment variable for current session"
+  windows = "set <NAME>=<value>"
+  unix    = "export <NAME>=<value>"

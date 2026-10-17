@@ -23,6 +23,26 @@ fn test_seed_tools_present() {
 }
 
 #[test]
+fn test_minimum_section_counts() {
+    let git = TOOLS.iter().find(|t| t.name == "git").expect("git found");
+    assert!(
+        git.sections.len() >= 12,
+        "git must have >= 12 sections, found {}",
+        git.sections.len()
+    );
+
+    let shell = TOOLS
+        .iter()
+        .find(|t| t.name == "shell")
+        .expect("shell found");
+    assert!(
+        shell.sections.len() >= 9,
+        "shell must have >= 9 sections, found {}",
+        shell.sections.len()
+    );
+}
+
+#[test]
 fn test_section_rules() {
     for tool in TOOLS {
         let mut seen_titles = HashSet::new();

@@ -1,8 +1,28 @@
 tool = "git"
 
 [[section]]
+title   = "Setup & Config"
+aliases = ["git config", "set username", "set email", "configure git"]
+
+  [[section.command]]
+  cmd  = "git config --global user.name \"<name>\""
+  note = "Sets global user name for commits"
+
+  [[section.command]]
+  cmd  = "git config --global user.email \"<email>\""
+  note = "Sets global email address for commits"
+
+  [[section.command]]
+  cmd  = "git config --global init.defaultBranch main"
+  note = "Sets default branch name to main"
+
+  [[section.command]]
+  cmd  = "git config --list"
+  note = "Lists all current git configuration settings"
+
+[[section]]
 title   = "Initializing a Repo"
-aliases = ["init repo", "start repo", "new project", "create repository"]
+aliases = ["init repo", "start repo", "new project", "create repository", "setup repo"]
 
   [[section.command]]
   cmd  = "git init"
@@ -39,3 +59,239 @@ aliases = ["clone repo", "download repo", "checkout repo", "download project"]
   [[section.command]]
   cmd  = "git clone <repo-url> <folder>"
   note = "Clones a repository into a specified folder"
+
+  [[section.command]]
+  cmd  = "git clone --depth 1 <repo-url>"
+  note = "Clones only the latest commit for a shallow copy"
+
+[[section]]
+title   = "Daily Workflow"
+aliases = ["git workflow", "save changes", "commit changes", "push code", "daily work"]
+
+  [[section.command]]
+  cmd  = "git status"
+  note = "Shows changed, staged, and untracked files"
+
+  [[section.command]]
+  cmd  = "git add <file>"
+  note = "Stages a specific file for the next commit"
+
+  [[section.command]]
+  cmd  = "git add ."
+  note = "Stages all modified and new files"
+
+  [[section.command]]
+  cmd  = "git commit -m \"<message>\""
+  note = "Records staged changes with a descriptive message"
+
+  [[section.command]]
+  cmd  = "git pull"
+  note = "Fetches and integrates remote changes into current branch"
+
+  [[section.command]]
+  cmd  = "git push"
+  note = "Uploads local branch commits to the remote repository"
+
+[[section]]
+title   = "Branching"
+aliases = ["create branch", "switch branch", "manage branches", "new branch", "list branches"]
+
+  [[section.command]]
+  cmd  = "git branch"
+  note = "Lists all local branches"
+
+  [[section.command]]
+  cmd  = "git branch -a"
+  note = "Lists both local and remote-tracking branches"
+
+  [[section.command]]
+  cmd  = "git switch -c <branch>"
+  note = "Creates and switches to a new branch"
+
+  [[section.command]]
+  cmd  = "git switch <branch>"
+  note = "Switches to an existing branch"
+
+  [[section.command]]
+  cmd  = "git merge <branch>"
+  note = "Merges specified branch into the current branch"
+
+  [[section.command]]
+  cmd  = "git branch -d <branch>"
+  note = "Deletes a specified branch safely"
+
+[[section]]
+title   = "Remotes"
+aliases = ["git remotes", "manage remotes", "add remote", "check remote", "remote repository"]
+
+  [[section.command]]
+  cmd  = "git remote -v"
+  note = "Displays names and URLs of all configured remotes"
+
+  [[section.command]]
+  cmd  = "git remote add <name> <url>"
+  note = "Adds a new remote repository connection"
+
+  [[section.command]]
+  cmd  = "git remote set-url <name> <url>"
+  note = "Changes the URL of an existing remote"
+
+  [[section.command]]
+  cmd  = "git remote remove <name>"
+  note = "Removes a specified remote connection"
+
+  [[section.command]]
+  cmd  = "git fetch <name>"
+  note = "Downloads commits and refs from remote without merging"
+
+[[section]]
+title   = "Undo & Rollback"
+aliases = ["undo commit", "reset hard", "rollback changes", "revert commit", "unstage file", "discard changes"]
+
+  [[section.command]]
+  cmd  = "git restore --staged <file>"
+  note = "Unstages a file while keeping its changes in working tree"
+
+  [[section.command]]
+  cmd  = "git restore <file>"
+  note = "Discards uncommitted changes in a working tree file"
+
+  [[section.command]]
+  cmd  = "git commit --amend -m \"<message>\""
+  note = "Rewrites the most recent commit message"
+
+  [[section.command]]
+  cmd  = "git reset --soft HEAD~1"
+  note = "Undoes last commit keeping changes staged"
+
+  [[section.command]]
+  cmd  = "git reset --hard HEAD~1"
+  note = "Discards last commit and all working tree changes"
+
+  [[section.command]]
+  cmd  = "git revert <commit>"
+  note = "Creates a new commit inverting an earlier commit"
+
+[[section]]
+title   = "Stash"
+aliases = ["git stash", "save work", "stash changes", "shelve changes", "pop stash"]
+
+  [[section.command]]
+  cmd  = "git stash"
+  note = "Saves uncommitted changes into a temporary stash"
+
+  [[section.command]]
+  cmd  = "git stash list"
+  note = "Lists all stashed changesets"
+
+  [[section.command]]
+  cmd  = "git stash pop"
+  note = "Restores and removes the most recently stashed changes"
+
+  [[section.command]]
+  cmd  = "git stash apply"
+  note = "Applies the most recent stash without removing it"
+
+  [[section.command]]
+  cmd  = "git stash drop"
+  note = "Discards the most recent stash from storage"
+
+  [[section.command]]
+  cmd  = "git stash clear"
+  note = "Removes all stashed changesets from storage"
+
+[[section]]
+title   = "Tags"
+aliases = ["git tags", "create tag", "release tag", "list tags", "version tag"]
+
+  [[section.command]]
+  cmd  = "git tag"
+  note = "Lists all tags in the repository"
+
+  [[section.command]]
+  cmd  = "git tag -a <tag> -m \"<message>\""
+  note = "Creates an annotated tag with a message"
+
+  [[section.command]]
+  cmd  = "git push origin <tag>"
+  note = "Pushes a specific tag to the remote repository"
+
+  [[section.command]]
+  cmd  = "git push origin --tags"
+  note = "Pushes all local tags to the remote repository"
+
+  [[section.command]]
+  cmd  = "git tag -d <tag>"
+  note = "Deletes a tag from the local repository"
+
+[[section]]
+title   = "History & Diff"
+aliases = ["git log", "git diff", "view commits", "check history", "compare changes", "see changes"]
+
+  [[section.command]]
+  cmd  = "git log --oneline --graph"
+  note = "Displays commit history as a compact graphical tree"
+
+  [[section.command]]
+  cmd  = "git log -n <number>"
+  note = "Shows the last N commits in the repository"
+
+  [[section.command]]
+  cmd  = "git diff"
+  note = "Shows unstaged changes in working tree compared to index"
+
+  [[section.command]]
+  cmd  = "git diff --staged"
+  note = "Shows staged changes compared to the last commit"
+
+  [[section.command]]
+  cmd  = "git show <commit>"
+  note = "Inspects metadata and diff of a specific commit"
+
+  [[section.command]]
+  cmd  = "git blame <file>"
+  note = "Shows author and commit for each line in a file"
+
+[[section]]
+title   = "Cleanup & Maintenance"
+aliases = ["git cleanup", "clean untracked", "prune branches", "git maintenance", "clean repo"]
+
+  [[section.command]]
+  cmd  = "git clean -n"
+  note = "Previews untracked files that would be removed"
+
+  [[section.command]]
+  cmd  = "git clean -fd"
+  note = "Forcibly deletes untracked files and directories"
+
+  [[section.command]]
+  cmd  = "git remote prune origin"
+  note = "Prunes stale remote-tracking branch references"
+
+  [[section.command]]
+  cmd  = "git branch --merged"
+  note = "Lists branches already merged into current branch"
+
+  [[section.command]]
+  cmd  = "git gc"
+  note = "Runs garbage collection and optimizes local repository"
+
+[[section]]
+title   = "Finding a Bad Commit (bisect)"
+aliases = ["git bisect", "find bug", "binary search commit", "find bad commit", "debug history"]
+
+  [[section.command]]
+  cmd  = "git bisect start"
+  note = "Begins a binary search to locate a buggy commit"
+
+  [[section.command]]
+  cmd  = "git bisect bad"
+  note = "Marks the current commit as faulty or broken"
+
+  [[section.command]]
+  cmd  = "git bisect good <commit>"
+  note = "Marks a known working commit to bound the search"
+
+  [[section.command]]
+  cmd  = "git bisect reset"
+  note = "Concludes bisect session and returns to original branch"
