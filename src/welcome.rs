@@ -192,12 +192,7 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
             term::RESET
         )?;
 
-        writeln!(
-            w,
-            "  {}⚡ WORKFLOWS TO TRY:{}",
-            C_YELLOW,
-            term::RESET
-        )?;
+        writeln!(w, "  {}⚡ WORKFLOWS TO TRY:{}", C_YELLOW, term::RESET)?;
         writeln!(
             w,
             "    {}ezcmd{} initializing repo       {}# Starting a new Git repo{}",
