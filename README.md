@@ -173,7 +173,7 @@ setx PATH "%PATH%;%USERPROFILE%\.local\bin"
 
 ```bash
 ezcmd --version
-# → ezcmd 0.2.0
+# → ezcmd 0.2.1
 ```
 
 ---
