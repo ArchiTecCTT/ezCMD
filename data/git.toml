@@ -1,0 +1,41 @@
+tool = "git"
+
+[[section]]
+title   = "Initializing a Repo"
+aliases = ["init repo", "start repo", "new project", "create repository"]
+
+  [[section.command]]
+  cmd  = "git init"
+  note = "Initializes a repo in the current folder"
+
+  [[section.command]]
+  cmd  = "git add ."
+  note = "Stages all new and changed files"
+
+  [[section.command]]
+  cmd  = "git commit -m \"Initial commit\""
+  note = "Saves the staged files as the first commit"
+
+  [[section.command]]
+  cmd  = "git branch -M main"
+  note = "Renames the current branch to main"
+
+  [[section.command]]
+  cmd  = "git remote add origin <repo-url>"
+  note = "Links the repo to a remote on GitHub"
+
+  [[section.command]]
+  cmd  = "git push -u origin main"
+  note = "Uploads main and sets it as the upstream"
+
+[[section]]
+title   = "Cloning a Repo"
+aliases = ["clone repo", "download repo", "checkout repo"]
+
+  [[section.command]]
+  cmd  = "git clone <repo-url>"
+  note = "Clones a remote repository into a new folder"
+
+  [[section.command]]
+  cmd  = "git clone <repo-url> <folder>"
+  note = "Clones a repository into a specified folder"

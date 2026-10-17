@@ -1,0 +1,41 @@
+tool = "shell"
+
+[[section]]
+title   = "Navigating Directories"
+aliases = ["change directory", "cd commands", "switch directory", "navigate folders"]
+
+  [[section.command]]
+  note    = "Shows current working directory"
+  windows = "cd"
+  unix    = "pwd"
+
+  [[section.command]]
+  note = "Changes to specified folder"
+  cmd  = "cd <folder>"
+
+  [[section.command]]
+  note = "Moves up to parent folder"
+  cmd  = "cd .."
+
+  [[section.command]]
+  note    = "Moves to root directory"
+  windows = "cd \\"
+  unix    = "cd /"
+
+  [[section.command]]
+  note    = "Clears the terminal screen"
+  windows = "cls"
+  unix    = "clear"
+
+[[section]]
+title   = "Creating Folders & Files"
+aliases = ["create folder", "make file", "create file", "new folder"]
+
+  [[section.command]]
+  note = "Creates a new folder"
+  cmd  = "mkdir <folder>"
+
+  [[section.command]]
+  note    = "Creates a new empty file"
+  windows = "type nul > <file>"
+  unix    = "touch <file>"
