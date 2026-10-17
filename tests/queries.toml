@@ -1,0 +1,141 @@
+# Seed queries for M3 accuracy testing (≥ 30 phrasings)
+
+[[q]]
+query  = "initializing repo"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "init repo"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "start repo"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "new project"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "create repository"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "initalize repo"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "initialize a new repository"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "start a git repository"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "git init"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "git branch -M main"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "git remote add origin"
+expect = "Initializing a Repo"
+
+[[q]]
+query  = "cloning repo"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "clone repo"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "download repo"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "checkout repo"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "git clone"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "clone a repository from github"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "download git project"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "clon repo"
+expect = "Cloning a Repo"
+
+[[q]]
+query  = "navigating directories"
+expect = "Navigating Directories"
+
+[[q]]
+query  = "change directory"
+expect = "Navigating Directories"
+
+[[q]]
+query  = "cd commands"
+expect = "Navigating Directories"
+
+[[q]]
+query  = "switch directory"
+expect = "Navigating Directories"
+
+[[q]]
+query  = "navigate folders"
+expect = "Navigating Directories"
+
+[[q]]
+query  = "pwd"
+expect = "Navigating Directories"
+os     = "linux"
+
+[[q]]
+query  = "cd .."
+expect = "Navigating Directories"
+
+[[q]]
+query  = "cls"
+expect = "Navigating Directories"
+os     = "windows"
+
+[[q]]
+query  = "clear"
+expect = "Navigating Directories"
+os     = "linux"
+
+[[q]]
+query  = "create folder"
+expect = "Creating Folders & Files"
+
+[[q]]
+query  = "make file"
+expect = "Creating Folders & Files"
+
+[[q]]
+query  = "create file"
+expect = "Creating Folders & Files"
+
+[[q]]
+query  = "new folder"
+expect = "Creating Folders & Files"
+
+[[q]]
+query  = "mkdir"
+expect = "Creating Folders & Files"
+
+[[q]]
+query  = "touch"
+expect = "Creating Folders & Files"
+os     = "linux"

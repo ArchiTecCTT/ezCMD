@@ -30,7 +30,7 @@ aliases = ["init repo", "start repo", "new project", "create repository"]
 
 [[section]]
 title   = "Cloning a Repo"
-aliases = ["clone repo", "download repo", "checkout repo"]
+aliases = ["clone repo", "download repo", "checkout repo", "download project"]
 
   [[section.command]]
   cmd  = "git clone <repo-url>"
