@@ -1,1 +1,306 @@
-// Section and help rendering
+use crate::model::Section;
+use crate::os::Os;
+use crate::term;
+use std::io::{self, Write};
+
+#[derive(Debug, Clone, Copy)]
+pub struct RenderCtx {
+    pub color: bool,
+    pub plain: bool,
+    pub width: usize,
+}
+
+impl Default for RenderCtx {
+    fn default() -> Self {
+        Self {
+            color: false,
+            plain: false,
+            width: 80,
+        }
+    }
+}
+
+/// Helper to color command text, highlighting placeholders `<...>` in yellow.
+fn colorize_command(cmd_text: &str) -> String {
+    let mut out = String::new();
+    let mut in_placeholder = false;
+    let mut in_bold = false;
+
+    for c in cmd_text.chars() {
+        if c == '<' {
+            if in_bold {
+                out.push_str(term::RESET);
+                in_bold = false;
+            }
+            out.push_str(term::YELLOW);
+            out.push('<');
+            in_placeholder = true;
+        } else if c == '>' {
+            out.push('>');
+            out.push_str(term::RESET);
+            in_placeholder = false;
+        } else if in_placeholder {
+            out.push(c);
+        } else {
+            if !in_bold {
+                out.push_str(term::BOLD);
+                in_bold = true;
+            }
+            out.push(c);
+        }
+    }
+    if in_bold || in_placeholder {
+        out.push_str(term::RESET);
+    }
+    out
+}
+
+struct PreparedCommand {
+    cmd_text: String,
+    note_text: String,
+    is_no_eq: bool,
+}
+
+/// Render a single section for the given OS.
+pub fn render_section<W: Write>(
+    w: &mut W,
+    section: &Section,
+    os: Os,
+    ctx: &RenderCtx,
+) -> io::Result<()> {
+    // If no command resolves for the OS, omit the whole section (Section 9.4)
+    if !section.available_on(os) {
+        return Ok(());
+    }
+
+    let mut prepared = Vec::new();
+    for cmd in section.commands {
+        if let Some(resolved) = cmd.resolve(os) {
+            prepared.push(PreparedCommand {
+                cmd_text: resolved.to_string(),
+                note_text: cmd.note.to_string(),
+                is_no_eq: false,
+            });
+        } else {
+            prepared.push(PreparedCommand {
+                cmd_text: "(no equivalent)".to_string(),
+                note_text: format!("{} [no equivalent on {}]", cmd.note, os.display()),
+                is_no_eq: true,
+            });
+        }
+    }
+
+    // Plain mode (--plain): `# ---Title---` then `command --- note`
+    if ctx.plain {
+        writeln!(w, "# ---{}---", section.title)?;
+        for p in prepared {
+            writeln!(w, "{} --- {}", p.cmd_text, p.note_text)?;
+        }
+        return Ok(());
+    }
+
+    // Determine cmd_w = longest command column text, capped at 48
+    let max_cmd_len = prepared
+        .iter()
+        .map(|p| p.cmd_text.chars().count())
+        .max()
+        .unwrap_or(0);
+    let cmd_w = max_cmd_len.min(48);
+
+    // Longest note
+    let longest_note = prepared
+        .iter()
+        .map(|p| p.note_text.chars().count())
+        .max()
+        .unwrap_or(0);
+
+    // Wide layout if `3 + cmd_w + 2 + 4 + longest_note <= term_width`
+    let is_wide = (3 + cmd_w + 6 + longest_note) <= ctx.width;
+
+    // Calculate widest line
+    let title_line_len = 8 + section.title.chars().count();
+    let mut widest_line = title_line_len;
+
+    if is_wide {
+        for p in &prepared {
+            let line_len = 3 + cmd_w + 6 + p.note_text.chars().count();
+            if line_len > widest_line {
+                widest_line = line_len;
+            }
+        }
+    } else {
+        for p in &prepared {
+            let cmd_len = 3 + p.cmd_text.chars().count();
+            let note_len = 11 + p.note_text.chars().count();
+            if cmd_len > widest_line {
+                widest_line = cmd_len;
+            }
+            if note_len > widest_line {
+                widest_line = note_len;
+            }
+        }
+    }
+
+    // Frame width = clamp(widest_line + 2, 60, max(term_width, 60))
+    let max_width = ctx.width.max(60);
+    let frame_width = (widest_line + 2).clamp(60, max_width);
+
+    // Top rule: ` ___[ ` + title + ` ]` + `_` to fill width
+    let prefix = " ___[ ";
+    let suffix = " ]";
+    let fixed_title_len =
+        prefix.chars().count() + section.title.chars().count() + suffix.chars().count();
+    let trailing_underscores = frame_width.saturating_sub(fixed_title_len);
+
+    if ctx.color {
+        writeln!(
+            w,
+            " {}___[{} {}{}{} {}]{}{}",
+            term::DIM,
+            term::RESET,
+            term::CYAN_BOLD,
+            section.title,
+            term::RESET,
+            term::DIM,
+            "_".repeat(trailing_underscores),
+            term::RESET
+        )?;
+        writeln!(w, "{}|{}", term::DIM, term::RESET)?;
+    } else {
+        writeln!(
+            w,
+            " ___[ {} ]{}",
+            section.title,
+            "_".repeat(trailing_underscores)
+        )?;
+        writeln!(w, "|")?;
+    }
+
+    // Content lines
+    for p in prepared {
+        if is_wide {
+            let cmd_len = p.cmd_text.chars().count();
+            let pad_len = cmd_w.saturating_sub(cmd_len);
+            let pad = " ".repeat(pad_len);
+
+            if ctx.color {
+                let colored_cmd = if p.is_no_eq {
+                    format!("{}{}{}{}", term::DIM, p.cmd_text, term::RESET, pad)
+                } else {
+                    format!("{}{}", colorize_command(&p.cmd_text), pad)
+                };
+
+                let colored_note = if p.is_no_eq {
+                    format!("{}{}{}", term::DIM, p.note_text, term::RESET)
+                } else {
+                    p.note_text
+                };
+
+                writeln!(
+                    w,
+                    "{}|{}  {}  {}---{} {}",
+                    term::DIM,
+                    term::RESET,
+                    colored_cmd,
+                    term::DIM,
+                    term::RESET,
+                    colored_note
+                )?;
+            } else {
+                writeln!(w, "|  {}{}  --- {}", p.cmd_text, pad, p.note_text)?;
+            }
+        } else {
+            // Narrow layout
+            if ctx.color {
+                let colored_cmd = if p.is_no_eq {
+                    format!("{}{}{}", term::DIM, p.cmd_text, term::RESET)
+                } else {
+                    colorize_command(&p.cmd_text)
+                };
+                let colored_note = if p.is_no_eq {
+                    format!("{}{}{}", term::DIM, p.note_text, term::RESET)
+                } else {
+                    p.note_text
+                };
+
+                writeln!(w, "{}|{}  {}", term::DIM, term::RESET, colored_cmd)?;
+                writeln!(w, "{}|      ---{} {}", term::DIM, term::RESET, colored_note)?;
+            } else {
+                writeln!(w, "|  {}", p.cmd_text)?;
+                writeln!(w, "|      --- {}", p.note_text)?;
+            }
+        }
+    }
+
+    // Bottom rule: `|` + `_` to fill width
+    let bottom_underscores = "_".repeat(frame_width.saturating_sub(1));
+    if ctx.color {
+        writeln!(w, "{}|{}{}", term::DIM, bottom_underscores, term::RESET)?;
+    } else {
+        writeln!(w, "|{}", bottom_underscores)?;
+    }
+
+    Ok(())
+}
+
+/// Render multiple sections, separated by a blank line.
+pub fn render_sections<W: Write>(
+    w: &mut W,
+    sections: &[&Section],
+    os: Os,
+    ctx: &RenderCtx,
+) -> io::Result<()> {
+    let mut first = true;
+    for section in sections {
+        if !section.available_on(os) {
+            continue;
+        }
+        if !first {
+            writeln!(w)?;
+        }
+        render_section(w, section, os, ctx)?;
+        first = false;
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::Command;
+
+    #[test]
+    fn test_colorize_command() {
+        let plain = "git clone <url>";
+        let colored = colorize_command(plain);
+        assert!(colored.contains(term::BOLD));
+        assert!(colored.contains(term::YELLOW));
+        assert!(colored.contains("<url>"));
+    }
+
+    #[test]
+    fn test_render_plain_mode() {
+        static CMD: [Command; 1] = [Command {
+            note: "Initialize repo",
+            cmd: Some("git init"),
+            unix: None,
+            windows: None,
+            linux: None,
+            macos: None,
+        }];
+        let sec = Section {
+            title: "Init",
+            aliases: &["init"],
+            commands: &CMD,
+        };
+        let ctx = RenderCtx {
+            color: false,
+            plain: true,
+            width: 80,
+        };
+        let mut buf = Vec::new();
+        render_section(&mut buf, &sec, Os::Linux, &ctx).expect("render");
+        let output = String::from_utf8(buf).expect("utf8");
+        assert_eq!(output, "# ---Init---\ngit init --- Initialize repo\n");
+    }
+}
