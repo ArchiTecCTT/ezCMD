@@ -122,6 +122,52 @@ Open PowerShell as Administrator and run:
 irm https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.ps1 | iex
 ```
 
+> [!IMPORTANT]
+> **Windows security notice:** The Windows build of ezCMD is not yet code-signed. Windows 11 **Smart App Control**, or a work/school device policy, may block `ezcmd.exe` the first time you run it with the message *"An Application Control policy has blocked this file."* If that happens, see [Windows troubleshooting](#windows-troubleshooting) below.
+
+<a id="windows-troubleshooting"></a>
+
+<details>
+<summary><b>Windows troubleshooting: common errors and fixes</b></summary>
+<br>
+
+**`An Application Control policy has blocked this file`** (shown when you run `ezcmd`)
+
+- **Cause:** Smart App Control blocks apps that are unsigned and have no reputation yet. There is no per-app exception for it. A managed work or school device can show the same message through its own policy.
+- **Fix:** Open **Windows Security**, go to **App & browser control**, then **Smart App Control settings**, and choose **Off**. Turning it off lowers protection against unknown programs, so only do this if you are comfortable with that. On older Windows 11 builds, turning it off cannot be undone without reinstalling Windows. Recent Windows 11 updates allow switching it back on later.
+- **Managed device:** If Smart App Control is already off, or the PC belongs to a workplace or school, ask the device administrator to allow `%USERPROFILE%\.local\bin\ezcmd.exe`.
+
+**`Cannot bind argument to parameter 'Path' because it is null`** (shown while installing)
+
+- **Cause:** An older version of the installer could not find its own location when piped into PowerShell. This is fixed in the current `install.ps1`.
+- **Fix:** Run the install command again. If the error persists, GitHub may still be serving a cached copy, so wait a few minutes and retry. You can also run the installer as a file instead:
+
+```powershell
+irm https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.ps1 -OutFile install.ps1
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+**`ezcmd is not recognized as the name of a cmdlet`** (or `not recognized as an internal or external command`)
+
+- **Cause:** The terminal you are using was opened before the install, so it has not picked up the new `PATH`.
+- **Fix:** Close the terminal and open a new one. If it still fails, add `%USERPROFILE%\.local\bin` to your `PATH` using the steps in [Terminal-Specific PATH Setup](#installation) below.
+
+**`running scripts is disabled on this system`** (when running `install.ps1` as a file)
+
+- **Cause:** PowerShell's execution policy blocks local script files.
+- **Fix:** Run the script with a one-time bypass, which does not change your system settings:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+**Download fails or returns a 404**
+
+- **Cause:** A network or proxy problem, a GitHub API rate limit, or a release that is missing its Windows file.
+- **Fix:** Retry after a moment. To install manually, download `ezcmd-<version>-x86_64-pc-windows-msvc.zip` from the [releases page](https://github.com/ItzEvhyx/ezCMD/releases), extract `ezcmd.exe`, and place it in `%USERPROFILE%\.local\bin`.
+
+</details>
+
 </details>
 
 <details>
