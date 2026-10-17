@@ -24,9 +24,23 @@
   <img src="assets/banners/ezcmd_ascii.png" alt="ezCMD ASCII Art" width="600">
 </p>
 
+<p align="center">
+  <a href="#preview"><b>Preview</b></a> &nbsp;|&nbsp;
+  <a href="#features"><b>Features</b></a> &nbsp;|&nbsp;
+  <a href="#platforms"><b>Platforms</b></a> &nbsp;|&nbsp;
+  <a href="#installation"><b>Installation</b></a> &nbsp;|&nbsp;
+  <a href="#usage"><b>Usage</b></a> &nbsp;|&nbsp;
+  <a href="#uninstalling"><b>Uninstalling</b></a> &nbsp;|&nbsp;
+  <a href="#releases"><b>Releases</b></a> &nbsp;|&nbsp;
+  <a href="#author"><b>Author</b></a> &nbsp;|&nbsp;
+  <a href="#license"><b>License</b></a>
+</p>
+
 ---
 
-## ⚡ Preview
+<a id="preview"></a>
+
+## <img src="https://api.iconify.design/lucide/terminal.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Preview
 
 ```text
 $ ezcmd initializing repo
@@ -42,24 +56,43 @@ $ ezcmd initializing repo
 |___________________________________________________________________________________|
 ```
 
+> [!NOTE]
 > **Aesthetic Terminal Box:** In modern terminals, borders and notes are styled with subtle dimming, commands are rendered in **bold `#96d0fb`**, and `<placeholders>` are highlighted in **yellow**. Color automatically switches off in pipes or when `NO_COLOR` is detected.
 
 ---
 
-## 🚀 Features
+<a id="features"></a>
 
-- 🎯 **Task-Oriented Search:** Search for what you intend to accomplish (`initializing repo`, `undo last commit`, `delete files`) rather than trying to remember syntax.
-- 🔍 **Intelligent Fuzzy Matcher:** Handles typos, transposed words, and natural phrasing using custom token-stemming and Damerau-Levenshtein distance.
-- 💻 **OS-Aware Resolution:** Automatically detects whether you are on Linux, macOS, or Windows CMD and presents commands that work for your operating system.
-- 📦 **Fully Offline & Self-Contained:** Cheatsheet data is compiled directly into the binary at build time. Zero network requests, zero telemetry, zero background daemons.
-- ⚡ **Blazing Performance:** Launches, matches, formats, and terminates in **under 15 milliseconds** with less than 1.2 MB footprint.
-- 🎨 **Fully Enclosed Box Frame:** Retro-modern ASCII borders enclose every output neatly on all sides.
-- 🎉 **Welcome Banner & Quickstart:** Beautiful gradient ASCII art greeting on first install with a built-in how-to guide.
-- 🗑️ **Built-in Uninstaller:** Clean removal with `ezcmd --uninstall` — no leftover files.
+## <img src="https://api.iconify.design/lucide/layers.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Features
+
+| | Feature | Description |
+|:---:|:---|:---|
+| <img src="https://api.iconify.design/lucide/target.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Task-Oriented Search** | Search for what you intend to accomplish (`initializing repo`, `undo last commit`, `delete files`) rather than trying to remember syntax. |
+| <img src="https://api.iconify.design/lucide/search.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Intelligent Fuzzy Matcher** | Handles typos, transposed words, and natural phrasing using custom token-stemming and Damerau-Levenshtein distance. |
+| <img src="https://api.iconify.design/lucide/monitor.svg?color=%2300b0ff" width="22" height="22" alt=""> | **OS-Aware Resolution** | Automatically detects whether you are on Linux, macOS, or Windows CMD and presents commands that work for your operating system. |
+| <img src="https://api.iconify.design/lucide/package.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Fully Offline & Self-Contained** | Cheatsheet data is compiled directly into the binary at build time. Zero network requests, zero telemetry, zero background daemons. |
+| <img src="https://api.iconify.design/lucide/zap.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Blazing Performance** | Launches, matches, formats, and terminates in **under 15 milliseconds** with less than 1.2 MB footprint. |
+| <img src="https://api.iconify.design/lucide/square.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Fully Enclosed Box Frame** | Retro-modern ASCII borders enclose every output neatly on all sides. |
+| <img src="https://api.iconify.design/lucide/flag.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Welcome Banner & Quickstart** | Beautiful gradient ASCII art greeting on first install with a built-in how-to guide. |
+| <img src="https://api.iconify.design/lucide/trash-2.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Built-in Uninstaller** | Clean removal with `ezcmd --uninstall`, no leftover files. |
 
 ---
 
-## 📥 Installation Guide
+<a id="platforms"></a>
+
+## <img src="https://api.iconify.design/lucide/monitor.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Supported Platforms
+
+| Operating System | Architecture | Status |
+|:---|:---|:---:|
+| **Linux** | x86_64, aarch64 (ARM64) | Supported |
+| **macOS** | Apple Silicon (M1/M2/M3), Intel x86_64 | Supported |
+| **Windows** | Windows 10, 11 (x86_64 CMD & PowerShell) | Supported |
+
+---
+
+<a id="installation"></a>
+
+## <img src="https://api.iconify.design/lucide/download.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Installation
 
 <details open>
 <summary><b>Quick Automated Install (Recommended)</b></summary>
@@ -67,7 +100,7 @@ $ ezcmd initializing repo
 
 #### Linux & macOS (Bash / Zsh / Fish)
 
-Run the one-liner install script — it auto-detects your OS and architecture:
+Run the one-liner install script. It auto-detects your OS and architecture:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.sh | bash
@@ -78,7 +111,8 @@ curl -fsSL https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.sh | ba
 2. Copies it to `~/.local/bin/ezcmd`
 3. Prints the welcome banner with a quickstart guide
 
-> **Note:** If `~/.local/bin` is not in your `PATH`, the installer will print instructions on how to add it for your shell.
+> [!NOTE]
+> If `~/.local/bin` is not in your `PATH`, the installer will print instructions on how to add it for your shell.
 
 #### Windows (PowerShell)
 
@@ -113,50 +147,53 @@ cargo build --release
 
 If `~/.local/bin` is not in your `PATH` after installation, add it for your shell:
 
-#### 🐟 Fish
+#### Fish
 ```fish
 set -Ua fish_user_paths ~/.local/bin
 ```
 
-#### 🐚 Bash
+#### Bash
 ```bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
 ```
 
-#### ⚡ Zsh
+#### Zsh
 ```zsh
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 ```
 
-#### 🪟 Windows CMD
+#### Windows CMD
 ```cmd
 setx PATH "%PATH%;%USERPROFILE%\.local\bin"
 ```
 
-**Verify installation:**
+</details>
+
+### Verify installation
+
 ```bash
 ezcmd --version
 # → ezcmd 0.2.0
 ```
 
-</details>
-
 ---
 
-## 📖 Usage & Cheatsheet
+<a id="usage"></a>
 
-```text
-ezcmd <query>                          Find a workflow or command
-ezcmd --help                           Show all sections for your current OS
-ezcmd --help -<tool>                   Show all sections for a tool (e.g. -git, -shell)
-ezcmd --help -<tool> -<section>        Show a specific section
-ezcmd --help -<os>                     View cheatsheet as Linux, macOS, or Windows
-ezcmd --plain <query>                  Raw plain output (no ANSI, no box frames)
-ezcmd --install                        Install ezcmd to PATH + show welcome
-ezcmd --welcome                        Display ASCII welcome banner & quickstart
-ezcmd --uninstall                      Uninstall ezcmd completely from system
-ezcmd --version                        Print installed ezcmd version
-```
+## <img src="https://api.iconify.design/lucide/book-open.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Usage & Cheatsheet
+
+| Command | Description |
+|:---|:---|
+| `ezcmd <query>` | Find a workflow or command |
+| `ezcmd --help` | Show all sections for your current OS |
+| `ezcmd --help -<tool>` | Show all sections for a tool (e.g. -git, -shell) |
+| `ezcmd --help -<tool> -<section>` | Show a specific section |
+| `ezcmd --help -<os>` | View cheatsheet as Linux, macOS, or Windows |
+| `ezcmd --plain <query>` | Raw plain output (no ANSI, no box frames) |
+| `ezcmd --install` | Install ezcmd to PATH + show welcome |
+| `ezcmd --welcome` | Display ASCII welcome banner & quickstart |
+| `ezcmd --uninstall` | Uninstall ezcmd completely from system |
+| `ezcmd --version` | Print installed ezcmd version |
 
 ### Examples
 
@@ -195,7 +232,9 @@ Choose [1/2/3]: 2
 
 ---
 
-## 🗑️ Uninstalling
+<a id="uninstalling"></a>
+
+## <img src="https://api.iconify.design/lucide/trash-2.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Uninstalling
 
 Uninstall ezCMD cleanly with the built-in command:
 
@@ -204,12 +243,14 @@ ezcmd --uninstall
 ```
 
 You can also find it through fuzzy search:
+
 ```bash
 ezcmd uninstall
 ezcmd remove tool
 ```
 
 For non-interactive environments (CI, scripts):
+
 ```bash
 ezcmd --uninstall -y
 ```
@@ -218,17 +259,9 @@ This removes the binary from `~/.local/bin`, symlinks, and any configuration fil
 
 ---
 
-## 🖥️ Supported Platforms
+<a id="releases"></a>
 
-| Operating System | Architecture | Status |
-|:---|:---|:---:|
-| **Linux** | x86_64, aarch64 (ARM64) | ✅ Supported |
-| **macOS** | Apple Silicon (M1/M2/M3), Intel x86_64 | ✅ Supported |
-| **Windows** | Windows 10, 11 (x86_64 CMD & PowerShell) | ✅ Supported |
-
----
-
-## 🔄 Release Automation
+## <img src="https://api.iconify.design/lucide/refresh-cw.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Release Automation
 
 Every tagged push (`v*`) triggers a [GitHub Actions workflow](.github/workflows/release.yml) that:
 
@@ -239,7 +272,9 @@ Every tagged push (`v*`) triggers a [GitHub Actions workflow](.github/workflows/
 
 ---
 
-## ✍️ Author & Credits
+<a id="author"></a>
+
+## <img src="https://api.iconify.design/lucide/user.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; Author & Credits
 
 <p align="center">
   <img src="assets/logos/ezcmd_logo_typography.png" alt="ezCMD Typography" width="300">
@@ -250,9 +285,10 @@ Created by **ItzEvhyx**
 - **GitHub:** [@ItzEvhyx](https://github.com/ItzEvhyx)
 - **Repository:** [https://github.com/ItzEvhyx/ezCMD](https://github.com/ItzEvhyx/ezCMD)
 
-
 ---
 
-## 📄 License
+<a id="license"></a>
+
+## <img src="https://api.iconify.design/lucide/file-text.svg?color=%2300b0ff" width="26" height="26" align="middle" alt="">&nbsp; License
 
 MIT License. See [LICENSE](LICENSE) for details.
