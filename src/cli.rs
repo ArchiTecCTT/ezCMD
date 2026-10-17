@@ -18,6 +18,9 @@ pub enum Action {
         tool: Option<String>,
         section: Option<String>,
     },
+    Uninstall { yes: bool }, // --uninstall
+    Welcome,                 // --welcome
+    Install,                 // --install
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -89,6 +92,43 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Invocation, CliError> {
             });
         }
     }
+
+    // Check for --uninstall before bare `--`
+    let has_uninstall = args[..pre_dash_limit]
+        .iter()
+        .any(|a| a.as_ref() == "--uninstall");
+    if has_uninstall {
+        let yes = args[..pre_dash_limit]
+            .iter()
+            .any(|a| a.as_ref() == "-y" || a.as_ref() == "--yes");
+        return Ok(Invocation {
+            plain,
+            action: Action::Uninstall { yes },
+        });
+    }
+
+    // Check for --welcome before bare `--`
+    let has_welcome = args[..pre_dash_limit]
+        .iter()
+        .any(|a| a.as_ref() == "--welcome");
+    if has_welcome {
+        return Ok(Invocation {
+            plain,
+            action: Action::Welcome,
+        });
+    }
+
+    // Check for --install before bare `--`
+    let has_install = args[..pre_dash_limit]
+        .iter()
+        .any(|a| a.as_ref() == "--install");
+    if has_install {
+        return Ok(Invocation {
+            plain,
+            action: Action::Install,
+        });
+    }
+
 
     // Check for --help before bare `--`
     let has_help = args[..pre_dash_limit]

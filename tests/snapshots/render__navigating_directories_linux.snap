@@ -2,22 +2,22 @@
 source: tests/render.rs
 expression: out_linux
 ---
- ___[ Navigating Directories ]_______________________________________________
-|
-|  pwd
-|      --- Shows current working directory
-|  cd <folder>
-|      --- Changes to specified folder
-|  cd ..
-|      --- Moves up to parent folder
-|  cd /
-|      --- Moves to root directory
-|  (no equivalent)
-|      --- Switches active drive and enters folder [no equivalent on Linux]
-|  ls -la
-|      --- Lists files and details in directory
-|  tree
-|      --- Displays graphical directory tree structure
-|  clear
-|      --- Clears the terminal screen
-|____________________________________________________________________________
+ ___[ Navigating Directories ]______________________________________________|
+|                                                                           |
+|  pwd                                                                      |
+|      --- Shows current working directory                                  |
+|  cd <folder>                                                              |
+|      --- Changes to specified folder                                      |
+|  cd ..                                                                    |
+|      --- Moves up to parent folder                                        |
+|  cd /                                                                     |
+|      --- Moves to root directory                                          |
+|  (no equivalent)                                                          |
+|      --- Switches active drive and enters folder [no equivalent on Linux] |
+|  ls -la                                                                   |
+|      --- Lists files and details in directory                             |
+|  tree                                                                     |
+|      --- Displays graphical directory tree structure                      |
+|  clear                                                                    |
+|      --- Clears the terminal screen                                       |
+|___________________________________________________________________________|

@@ -198,3 +198,12 @@ aliases = ["env variables", "show path", "set variable", "export variable", "pri
   note    = "Sets an environment variable for current session"
   windows = "set <NAME>=<value>"
   unix    = "export <NAME>=<value>"
+
+[[section]]
+title   = "Uninstalling ezcmd"
+aliases = ["uninstall ezcmd", "remove ezcmd", "delete ezcmd", "uninstall tool", "uninstall"]
+
+  [[section.command]]
+  note = "Uninstalls ezcmd from your system"
+  cmd  = "ezcmd --uninstall"
+

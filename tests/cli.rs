@@ -188,3 +188,24 @@ fn test_help_plain_mode() {
         .stdout(predicate::str::contains("# ---Initializing a Repo---"))
         .stdout(predicate::str::contains("\x1b[").not());
 }
+
+#[test]
+fn test_fuzzy_search_uninstall() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["uninstall"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Uninstalling ezcmd"))
+        .stdout(predicate::str::contains("ezcmd --uninstall"));
+}
+
+#[test]
+fn test_welcome_flag() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--welcome"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Welcome to ezCMD!"))
+        .stdout(predicate::str::contains("ItzEvhyx"))
+        .stdout(predicate::str::contains("https://github.com/ItzEvhyx"));
+}

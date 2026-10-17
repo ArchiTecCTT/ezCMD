@@ -37,6 +37,18 @@ fn print_usage_header<W: Write>(w: &mut W, ctx: &RenderCtx) -> io::Result<()> {
         w,
         "  ezcmd --help -<os>                     Show everything for another OS"
     )?;
+    writeln!(
+        w,
+        "  ezcmd --install                        Install ezcmd to PATH"
+    )?;
+    writeln!(
+        w,
+        "  ezcmd --uninstall                      Uninstall ezcmd from machine"
+    )?;
+    writeln!(
+        w,
+        "  ezcmd --welcome                        Show welcome banner & quickstart"
+    )?;
     Ok(())
 }
 
@@ -65,6 +77,16 @@ fn run<W: Write>(args: &[String], out: &mut W) -> io::Result<i32> {
             writeln!(out)?;
             writeln!(out, "Run 'ezcmd --help' to see all commands.")?;
             Ok(0)
+        }
+        Action::Install => {
+            ezcmd::welcome::run_install(out, render_ctx.color)
+        }
+        Action::Welcome => {
+            ezcmd::welcome::print_welcome(out, render_ctx.color)?;
+            Ok(0)
+        }
+        Action::Uninstall { yes } => {
+            ezcmd::uninstall::run_uninstall(out, yes)
         }
         Action::Version => {
             writeln!(out, "ezcmd {}", env!("CARGO_PKG_VERSION"))?;

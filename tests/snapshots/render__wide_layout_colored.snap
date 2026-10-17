@@ -2,12 +2,12 @@
 source: tests/render.rs
 expression: output
 ---
- [90m___[[0m [1;36mInitializing a Repo[0m [90m]__________________________________________________________[0m
-[90m|[0m
-[90m|[0m  [1mgit init[0m                          [90m---[0m Initializes a repo in the current folder
-[90m|[0m  [1mgit add .[0m                         [90m---[0m Stages all new and changed files
-[90m|[0m  [1mgit commit -m "Initial commit"[0m    [90m---[0m Saves the staged files as the first commit
-[90m|[0m  [1mgit branch -M main[0m                [90m---[0m Renames the current branch to main
-[90m|[0m  [1mgit remote add origin [0m[33m<repo-url>[0m  [90m---[0m Links the repo to a remote on GitHub
-[90m|[0m  [1mgit push -u origin main[0m           [90m---[0m Uploads main and sets it as the upstream
-[90m|____________________________________________________________________________________[0m
+ [90m___[[0m [1;36mInitializing a Repo[0m [90m]_________________________________________________________[90m|[0m
+[90m|                                                                                   [90m|[0m
+[90m|[0m  [1mgit init[0m                          [90m---[0m Initializes a repo in the current folder   [90m|[0m
+[90m|[0m  [1mgit add .[0m                         [90m---[0m Stages all new and changed files           [90m|[0m
+[90m|[0m  [1mgit commit -m "Initial commit"[0m    [90m---[0m Saves the staged files as the first commit [90m|[0m
+[90m|[0m  [1mgit branch -M main[0m                [90m---[0m Renames the current branch to main         [90m|[0m
+[90m|[0m  [1mgit remote add origin [0m[33m<repo-url>[0m  [90m---[0m Links the repo to a remote on GitHub       [90m|[0m
+[90m|[0m  [1mgit push -u origin main[0m           [90m---[0m Uploads main and sets it as the upstream   [90m|[0m
+[90m|___________________________________________________________________________________|[0m

@@ -142,20 +142,21 @@ pub fn render_section<W: Write>(
     }
 
     // Frame width = clamp(widest_line + 2, 60, max(term_width, 60))
+    // Frame width = clamp(widest_line + 2, 60, max(term_width, 60))
     let max_width = ctx.width.max(60);
     let frame_width = (widest_line + 2).clamp(60, max_width);
 
-    // Top rule: ` ___[ ` + title + ` ]` + `_` to fill width
+    // Top rule: ` ___[ ` + title + ` ]` + `_` to fill width, ending with `|`
     let prefix = " ___[ ";
     let suffix = " ]";
     let fixed_title_len =
         prefix.chars().count() + section.title.chars().count() + suffix.chars().count();
-    let trailing_underscores = frame_width.saturating_sub(fixed_title_len);
+    let trailing_underscores = frame_width.saturating_sub(fixed_title_len + 1);
 
     if ctx.color {
         writeln!(
             w,
-            " {}___[{} {}{}{} {}]{}{}",
+            " {}___[{} {}{}{} {}]{}{}|{}",
             term::DIM,
             term::RESET,
             term::CYAN_BOLD,
@@ -163,17 +164,25 @@ pub fn render_section<W: Write>(
             term::RESET,
             term::DIM,
             "_".repeat(trailing_underscores),
+            term::DIM,
             term::RESET
         )?;
-        writeln!(w, "{}|{}", term::DIM, term::RESET)?;
+        writeln!(
+            w,
+            "{}|{}{}|{}",
+            term::DIM,
+            " ".repeat(frame_width.saturating_sub(2)),
+            term::DIM,
+            term::RESET
+        )?;
     } else {
         writeln!(
             w,
-            " ___[ {} ]{}",
+            " ___[ {} ]{}|",
             section.title,
             "_".repeat(trailing_underscores)
         )?;
-        writeln!(w, "|")?;
+        writeln!(w, "|{}|", " ".repeat(frame_width.saturating_sub(2)))?;
     }
 
     // Content lines
@@ -182,6 +191,8 @@ pub fn render_section<W: Write>(
             let cmd_len = p.cmd_text.chars().count();
             let pad_len = cmd_w.saturating_sub(cmd_len);
             let pad = " ".repeat(pad_len);
+            let line_content_len = 3 + cmd_w + 6 + p.note_text.chars().count();
+            let right_pad = (frame_width.saturating_sub(1)).saturating_sub(line_content_len);
 
             if ctx.color {
                 let colored_cmd = if p.is_no_eq {
@@ -198,19 +209,35 @@ pub fn render_section<W: Write>(
 
                 writeln!(
                     w,
-                    "{}|{}  {}  {}---{} {}",
+                    "{}|{}  {}  {}---{} {}{}{}|{}",
                     term::DIM,
                     term::RESET,
                     colored_cmd,
                     term::DIM,
                     term::RESET,
-                    colored_note
+                    colored_note,
+                    " ".repeat(right_pad),
+                    term::DIM,
+                    term::RESET
                 )?;
             } else {
-                writeln!(w, "|  {}{}  --- {}", p.cmd_text, pad, p.note_text)?;
+                writeln!(
+                    w,
+                    "|  {}{}  --- {}{}|",
+                    p.cmd_text,
+                    pad,
+                    p.note_text,
+                    " ".repeat(right_pad)
+                )?;
             }
         } else {
             // Narrow layout
+            let cmd_len = p.cmd_text.chars().count();
+            let cmd_right_pad = (frame_width.saturating_sub(1)).saturating_sub(3 + cmd_len);
+
+            let note_len = p.note_text.chars().count();
+            let note_right_pad = (frame_width.saturating_sub(1)).saturating_sub(11 + note_len);
+
             if ctx.color {
                 let colored_cmd = if p.is_no_eq {
                     format!("{}{}{}", term::DIM, p.cmd_text, term::RESET)
@@ -223,21 +250,50 @@ pub fn render_section<W: Write>(
                     p.note_text
                 };
 
-                writeln!(w, "{}|{}  {}", term::DIM, term::RESET, colored_cmd)?;
-                writeln!(w, "{}|      ---{} {}", term::DIM, term::RESET, colored_note)?;
+                writeln!(
+                    w,
+                    "{}|{}  {}{}{}|{}",
+                    term::DIM,
+                    term::RESET,
+                    colored_cmd,
+                    " ".repeat(cmd_right_pad),
+                    term::DIM,
+                    term::RESET
+                )?;
+                writeln!(
+                    w,
+                    "{}|      ---{} {}{}{}|{}",
+                    term::DIM,
+                    term::RESET,
+                    colored_note,
+                    " ".repeat(note_right_pad),
+                    term::DIM,
+                    term::RESET
+                )?;
             } else {
-                writeln!(w, "|  {}", p.cmd_text)?;
-                writeln!(w, "|      --- {}", p.note_text)?;
+                writeln!(w, "|  {}{}|", p.cmd_text, " ".repeat(cmd_right_pad))?;
+                writeln!(
+                    w,
+                    "|      --- {}{}|",
+                    p.note_text,
+                    " ".repeat(note_right_pad)
+                )?;
             }
         }
     }
 
-    // Bottom rule: `|` + `_` to fill width
-    let bottom_underscores = "_".repeat(frame_width.saturating_sub(1));
+    // Bottom rule: `|` + `_` to fill width, ending with `|`
+    let bottom_underscores = "_".repeat(frame_width.saturating_sub(2));
     if ctx.color {
-        writeln!(w, "{}|{}{}", term::DIM, bottom_underscores, term::RESET)?;
+        writeln!(
+            w,
+            "{}|{}|{}",
+            term::DIM,
+            bottom_underscores,
+            term::RESET
+        )?;
     } else {
-        writeln!(w, "|{}", bottom_underscores)?;
+        writeln!(w, "|{}|", bottom_underscores)?;
     }
 
     Ok(())
