@@ -39,3 +39,22 @@ aliases = ["create folder", "make file", "create file", "new folder"]
   note    = "Creates a new empty file"
   windows = "type nul > <file>"
   unix    = "touch <file>"
+
+[[section]]
+title   = "Removing Folders & Files"
+aliases = ["delete folder", "remove directory", "delete file", "remove files"]
+
+  [[section.command]]
+  note = "Removes an empty folder"
+  cmd  = "rmdir <folder>"
+
+  [[section.command]]
+  note    = "Removes a folder and all its contents"
+  windows = "rmdir /s /q <folder>"
+  unix    = "rm -rf <folder>"
+
+  [[section.command]]
+  note    = "Deletes a file"
+  windows = "del <file>"
+  unix    = "rm <file>"
+

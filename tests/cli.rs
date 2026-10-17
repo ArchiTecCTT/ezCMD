@@ -74,9 +74,67 @@ fn test_unknown_flag_exit_code_2() {
 
 #[test]
 fn test_piped_stdin_does_not_block() {
-    // assert_cmd runs commands with piped stdin (not a terminal)
     let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
     cmd.args(["repo"]).assert().success();
+}
+
+#[test]
+fn test_help_all() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.arg("--help")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("USAGE:"))
+        .stdout(predicate::str::contains("TOOL: git"))
+        .stdout(predicate::str::contains("TOOL: shell"))
+        .stdout(predicate::str::contains("Initializing a Repo"))
+        .stdout(predicate::str::contains("Navigating Directories"));
+}
+
+#[test]
+fn test_help_tool_git_only() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-git"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("USAGE:"))
+        .stdout(predicate::str::contains("Initializing a Repo"))
+        .stdout(predicate::str::contains("Navigating Directories").not())
+        .stdout(predicate::str::contains("TOOL: shell").not());
+}
+
+#[test]
+fn test_help_tool_shell_only() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-shell"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("USAGE:"))
+        .stdout(predicate::str::contains("Navigating Directories"))
+        .stdout(predicate::str::contains("Initializing a Repo").not())
+        .stdout(predicate::str::contains("TOOL: git").not());
+}
+
+#[test]
+fn test_help_windows_view() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-windows"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("rmdir /s /q <folder>"))
+        .stdout(predicate::str::contains("type nul > <file>"))
+        .stdout(predicate::str::contains("cls"));
+}
+
+#[test]
+fn test_help_linux_view() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-linux"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("rm -rf <folder>"))
+        .stdout(predicate::str::contains("touch <file>"))
+        .stdout(predicate::str::contains("clear"));
 }
 
 #[test]
@@ -86,5 +144,47 @@ fn test_help_git_single_section() {
         .assert()
         .success()
         .stdout(predicate::str::contains("Initializing a Repo"))
+        .stdout(predicate::str::contains("git init"))
+        .stdout(predicate::str::contains("USAGE:").not())
+        .stdout(predicate::str::contains("TOOL:").not())
+        .stdout(predicate::str::contains("Cloning a Repo").not());
+}
+
+#[test]
+fn test_help_git_fuzzy_section() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-git", "-start", "repo"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Initializing a Repo"))
         .stdout(predicate::str::contains("git init"));
+}
+
+#[test]
+fn test_help_windows_git_single_section() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-windows", "-git", "-initialize", "repo"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Initializing a Repo"))
+        .stdout(predicate::str::contains("git init"));
+}
+
+#[test]
+fn test_help_unknown_selector_exit_2() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-nonexistent"])
+        .assert()
+        .code(2)
+        .stderr(predicate::str::contains("unknown selector"));
+}
+
+#[test]
+fn test_help_plain_mode() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--plain", "--help", "-git"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("# ---Initializing a Repo---"))
+        .stdout(predicate::str::contains("\x1b[").not());
 }
