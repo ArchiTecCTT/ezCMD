@@ -29,7 +29,7 @@ if ($ScriptDir -and (Test-Path "$ScriptDir\target\release\ezcmd.exe")) {
         # ignore api error/rate limit
     }
     if (-not $ZipUrl) {
-        $ZipUrl = "https://github.com/$Repo/releases/download/v0.1.0/ezcmd-v0.1.0-$AssetTarget.zip"
+        $ZipUrl = "https://github.com/$Repo/releases/download/v0.2.0/ezcmd-v0.2.0-$AssetTarget.zip"
     }
 
     $TempZip = "$env:TEMP\ezcmd.zip"
@@ -42,6 +42,13 @@ if ($ScriptDir -and (Test-Path "$ScriptDir\target\release\ezcmd.exe")) {
     Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
     Remove-Item $TempExtract -Recurse -Force -ErrorAction SilentlyContinue
 }
+
+# Create configuration marker
+$ConfigDir = "$env:APPDATA\ezcmd"
+if (-not (Test-Path $ConfigDir)) {
+    New-Item -ItemType Directory -Path $ConfigDir -Force | Out-Null
+}
+Set-Content -Path "$ConfigDir\.installed" -Value "installed" -Force
 
 # Check if ~/.local/bin is in PATH
 $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
@@ -87,6 +94,6 @@ try {
   AUTHOR & CREDITS:
     Created by ItzEvhyx (Me)
     GitHub: https://github.com/ItzEvhyx
-    Repo:   https://github.com/ItzEvhyx/ezcmd
+    Repo:   https://github.com/ItzEvhyx/ezCMD
 "@
 }

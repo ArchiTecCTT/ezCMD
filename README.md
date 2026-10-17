@@ -11,7 +11,7 @@
   <i>A fast, offline, OS-aware terminal cheatsheet that remembers so you don't have to.</i></p>
 
   <p>
-    <a href="https://github.com/ItzEvhyx/ezcmd/releases"><img src="https://img.shields.io/github/v/release/ItzEvhyx/ezcmd?color=00d2ff&style=for-the-badge&logo=github" alt="Release"></a>
+    <a href="https://github.com/ItzEvhyx/ezCMD/releases"><img src="https://img.shields.io/github/v/release/ItzEvhyx/ezCMD?color=00d2ff&style=for-the-badge&logo=github" alt="Release"></a>
     <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-7928CA?style=for-the-badge&logo=linux" alt="Platform">
     <img src="https://img.shields.io/badge/Startup-%3C%2015ms-00e676?style=for-the-badge&logo=speedtest" alt="Startup">
     <img src="https://img.shields.io/badge/Size-%3C%201.2MB-00b0ff?style=for-the-badge" alt="Size">
@@ -20,16 +20,9 @@
 
 </div>
 
-```text
-                      /$$$$$$  /$$      /$$ /$$$$$$$ 
-                     /$$__  $$| $$$    /$$$| $$__  $$
-  /$$$$$$  /$$$$$$$$| $$  \__/| $$$$  /$$$$| $$  \ $$
- /$$__  $$|____ /$$/| $$      | $$ $$/$$ $$| $$  | $$
-| $$$$$$$$   /$$$$/ | $$      | $$  $$$| $$| $$  | $$
-| $$_____/  /$$__/  | $$    $$| $$\  $ | $$| $$  | $$
-|  $$$$$$$ /$$$$$$$$|  $$$$$$/| $$ \/  | $$| $$$$$$$/
- \_______/|________/ \______/ |__/     |__/|_______/ 
-```
+<p align="center">
+  <img src="assets/banners/ezcmd_ascii.png" alt="ezCMD ASCII Art" width="600">
+</p>
 
 ---
 
@@ -38,7 +31,7 @@
 ```text
 $ ezcmd initializing repo
 
- ___[ Initializing a Repo ]_________________________________________________________|
+ ___[ Initializing a Repo ]_________________________________________________________| 
 |                                                                                   |
 |  git init                          --- Initializes a repo in the current folder   |
 |  git add .                         --- Stages all new and changed files           |
@@ -49,7 +42,7 @@ $ ezcmd initializing repo
 |___________________________________________________________________________________|
 ```
 
-> **Aesthetic Terminal Box:** In modern terminals, borders and notes are styled with subtle dimming, commands are rendered in **bold**, and `<placeholders>` are highlighted in **yellow**. Color automatically switches off in pipes or when `NO_COLOR` is detected.
+> **Aesthetic Terminal Box:** In modern terminals, borders and notes are styled with subtle dimming, commands are rendered in **bold `#96d0fb`**, and `<placeholders>` are highlighted in **yellow**. Color automatically switches off in pipes or when `NO_COLOR` is detected.
 
 ---
 
@@ -61,6 +54,8 @@ $ ezcmd initializing repo
 - 📦 **Fully Offline & Self-Contained:** Cheatsheet data is compiled directly into the binary at build time. Zero network requests, zero telemetry, zero background daemons.
 - ⚡ **Blazing Performance:** Launches, matches, formats, and terminates in **under 15 milliseconds** with less than 1.2 MB footprint.
 - 🎨 **Fully Enclosed Box Frame:** Retro-modern ASCII borders enclose every output neatly on all sides.
+- 🎉 **Welcome Banner & Quickstart:** Beautiful gradient ASCII art greeting on first install with a built-in how-to guide.
+- 🗑️ **Built-in Uninstaller:** Clean removal with `ezcmd --uninstall` — no leftover files.
 
 ---
 
@@ -71,74 +66,26 @@ $ ezcmd initializing repo
 <br>
 
 #### Linux & macOS (Bash / Zsh / Fish)
-Run the automated installation script:
+
+Run the one-liner install script — it auto-detects your OS and architecture:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.sh | bash
 ```
-*The installer automatically downloads the prebuilt binary for your OS and architecture, copies it to `~/.local/bin/ezcmd`, confirms successful installation, and prints the ASCII welcome banner.*
+
+**What this does:**
+1. Downloads the correct prebuilt binary from the [latest GitHub release](https://github.com/ItzEvhyx/ezCMD/releases)
+2. Copies it to `~/.local/bin/ezcmd`
+3. Prints the welcome banner with a quickstart guide
+
+> **Note:** If `~/.local/bin` is not in your `PATH`, the installer will print instructions on how to add it for your shell.
 
 #### Windows (PowerShell)
-Open PowerShell and run:
+
+Open PowerShell as Administrator and run:
+
 ```powershell
 irm https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.ps1 | iex
-```
-
-</details>
-
-<details>
-<summary><b>Terminal-Specific Setup (Fish, Bash, Zsh, CMD)</b></summary>
-<br>
-
-### 🐟 Fish Terminal
-Fish handles paths and shell commands differently than POSIX shells. If installing manually or building from source:
-
-```fish
-# 1. Create ~/.local/bin if not present
-mkdir -p ~/.local/bin
-
-# 2. Symlink the ezcmd binary
-ln -sf (pwd)/target/release/ezcmd ~/.local/bin/ezcmd
-
-# 3. Permanently add ~/.local/bin to Fish's universal PATH:
-set -Ua fish_user_paths ~/.local/bin
-
-# 4. Verify installation
-ezcmd --version
-```
-
----
-
-### 🐚 Bash Terminal
-```bash
-# 1. Create directory and symlink
-mkdir -p ~/.local/bin
-ln -sf "$(pwd)/target/release/ezcmd" ~/.local/bin/ezcmd
-
-# 2. Add ~/.local/bin to PATH if needed
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
-
----
-
-### ⚡ Zsh Terminal
-```zsh
-# 1. Create directory and symlink
-mkdir -p ~/.local/bin
-ln -sf "$(pwd)/target/release/ezcmd" ~/.local/bin/ezcmd
-
-# 2. Add ~/.local/bin to PATH if needed
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
-
----
-
-### 🪟 Windows CMD
-```cmd
-mkdir %USERPROFILE%\.local\bin
-copy target\release\ezcmd.exe %USERPROFILE%\.local\bin\
-setx PATH "%PATH%;%USERPROFILE%\.local\bin"
 ```
 
 </details>
@@ -147,13 +94,49 @@ setx PATH "%PATH%;%USERPROFILE%\.local\bin"
 <summary><b>From Source (Rust / Cargo)</b></summary>
 <br>
 
+Requires [Rust 1.70+](https://rustup.rs/).
+
 ```bash
 git clone https://github.com/ItzEvhyx/ezCMD.git
 cd ezCMD
 cargo build --release
 
-# Run self-installer to place into ~/.local/bin and show welcome banner
+# Run the built-in installer (copies to ~/.local/bin + shows welcome)
 ./target/release/ezcmd --install
+```
+
+</details>
+
+<details>
+<summary><b>Terminal-Specific PATH Setup</b></summary>
+<br>
+
+If `~/.local/bin` is not in your `PATH` after installation, add it for your shell:
+
+#### 🐟 Fish
+```fish
+set -Ua fish_user_paths ~/.local/bin
+```
+
+#### 🐚 Bash
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+```
+
+#### ⚡ Zsh
+```zsh
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+```
+
+#### 🪟 Windows CMD
+```cmd
+setx PATH "%PATH%;%USERPROFILE%\.local\bin"
+```
+
+**Verify installation:**
+```bash
+ezcmd --version
+# → ezcmd 0.2.0
 ```
 
 </details>
@@ -169,6 +152,7 @@ ezcmd --help -<tool>                   Show all sections for a tool (e.g. -git, 
 ezcmd --help -<tool> -<section>        Show a specific section
 ezcmd --help -<os>                     View cheatsheet as Linux, macOS, or Windows
 ezcmd --plain <query>                  Raw plain output (no ANSI, no box frames)
+ezcmd --install                        Install ezcmd to PATH + show welcome
 ezcmd --welcome                        Display ASCII welcome banner & quickstart
 ezcmd --uninstall                      Uninstall ezcmd completely from system
 ezcmd --version                        Print installed ezcmd version
@@ -213,7 +197,7 @@ Choose [1/2/3]: 2
 
 ## 🗑️ Uninstalling
 
-You can easily uninstall ezCMD anytime using the built-in uninstall command:
+Uninstall ezCMD cleanly with the built-in command:
 
 ```bash
 ezcmd --uninstall
@@ -225,7 +209,12 @@ ezcmd uninstall
 ezcmd remove tool
 ```
 
-This cleans up the binary, symlinks from `~/.local/bin`, and any configuration files.
+For non-interactive environments (CI, scripts):
+```bash
+ezcmd --uninstall -y
+```
+
+This removes the binary from `~/.local/bin`, symlinks, and any configuration files. If ezcmd is not installed, it will let you know with a clear error message.
 
 ---
 
@@ -239,7 +228,22 @@ This cleans up the binary, symlinks from `~/.local/bin`, and any configuration f
 
 ---
 
+## 🔄 Release Automation
+
+Every tagged push (`v*`) triggers a [GitHub Actions workflow](.github/workflows/release.yml) that:
+
+1. Cross-compiles for **5 targets** (Linux x86/ARM, macOS x86/ARM, Windows)
+2. Packages as `.tar.gz` (Unix) or `.zip` (Windows)
+3. Generates SHA-256 checksums
+4. Creates a GitHub Release with all artifacts
+
+---
+
 ## ✍️ Author & Credits
+
+<p align="center">
+  <img src="assets/logos/ezcmd_logo_typography.png" alt="ezCMD Typography" width="300">
+</p>
 
 Created by **ItzEvhyx**
 

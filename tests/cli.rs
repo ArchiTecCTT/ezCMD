@@ -7,7 +7,7 @@ fn test_version() {
     cmd.arg("--version")
         .assert()
         .success()
-        .stdout(predicate::str::contains("ezcmd 0.1.0"));
+        .stdout(predicate::str::contains(format!("ezcmd {}", env!("CARGO_PKG_VERSION"))));
 }
 
 #[test]

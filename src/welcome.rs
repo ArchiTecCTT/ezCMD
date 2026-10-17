@@ -87,16 +87,16 @@ pub fn run_install<W: Write>(w: &mut W, color: bool) -> io::Result<i32> {
 
     if let Ok(current_exe) = std::env::current_exe() {
         if current_exe != dest_exe {
+            let _ = std::fs::remove_file(&dest_exe);
+            let _ = std::fs::copy(&current_exe, &dest_exe);
             #[cfg(unix)]
             {
-                let _ = std::fs::remove_file(&dest_exe);
-                if std::os::unix::fs::symlink(&current_exe, &dest_exe).is_err() {
-                    let _ = std::fs::copy(&current_exe, &dest_exe);
+                use std::os::unix::fs::PermissionsExt;
+                if let Ok(metadata) = std::fs::metadata(&dest_exe) {
+                    let mut perms = metadata.permissions();
+                    perms.set_mode(0o755);
+                    let _ = std::fs::set_permissions(&dest_exe, perms);
                 }
-            }
-            #[cfg(not(unix))]
-            {
-                let _ = std::fs::copy(&current_exe, &dest_exe);
             }
         }
     }

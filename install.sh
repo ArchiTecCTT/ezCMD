@@ -60,12 +60,12 @@ else
 
     # Fallback to direct download URLs
     if [ -z "$TAR_URL" ]; then
-        TAR_URL="https://github.com/${REPO}/releases/download/v0.1.0/ezcmd-v0.1.0-${ASSET_TARGET}.tar.gz"
+        TAR_URL="https://github.com/${REPO}/releases/download/v0.2.0/ezcmd-v0.2.0-${ASSET_TARGET}.tar.gz"
     fi
 
     echo "Downloading ${TAR_URL}..."
     if ! curl -fsSL "${TAR_URL}" -o "${TMP_DIR}/ezcmd.tar.gz" 2>/dev/null; then
-        FALLBACK_URL="https://github.com/${REPO}/releases/download/v0.1.0/ezcmd-v0.1.0-${ASSET_TARGET}.tar.gz"
+        FALLBACK_URL="https://github.com/${REPO}/releases/download/v0.2.0/ezcmd-v0.2.0-${ASSET_TARGET}.tar.gz"
         echo "Trying fallback ${FALLBACK_URL}..."
         curl -fsSL "${FALLBACK_URL}" -o "${TMP_DIR}/ezcmd.tar.gz"
     fi
@@ -93,6 +93,11 @@ case ":${PATH}:" in
         echo ""
         ;;
 esac
+
+# Create configuration marker
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/ezcmd"
+mkdir -p "${CONFIG_DIR}"
+echo "installed" > "${CONFIG_DIR}/.installed"
 
 # Automatically show the welcome banner
 "${TARGET_PATH}" --welcome

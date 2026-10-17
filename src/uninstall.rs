@@ -3,6 +3,10 @@ use crate::welcome;
 use std::io::{self, IsTerminal, Write};
 use std::path::PathBuf;
 
+fn path_exists_or_symlink(path: &std::path::Path) -> bool {
+    std::fs::symlink_metadata(path).is_ok()
+}
+
 /// Collect all known installation paths for ezcmd.
 fn installed_paths() -> Vec<PathBuf> {
     let mut paths = Vec::new();
@@ -28,20 +32,44 @@ fn installed_paths() -> Vec<PathBuf> {
         }
     }
 
+    // Scan PATH environment variable for any other ezcmd binaries/symlinks
+    if let Some(path_var) = std::env::var_os("PATH") {
+        for dir in std::env::split_paths(&path_var) {
+            #[cfg(windows)]
+            let candidate = dir.join("ezcmd.exe");
+            #[cfg(not(windows))]
+            let candidate = dir.join("ezcmd");
+            if path_exists_or_symlink(&candidate) && !paths.contains(&candidate) {
+                paths.push(candidate);
+            }
+        }
+    }
+
+    // Also include current_exe if it's named ezcmd and not running from target/
+    if let Ok(current_exe) = std::env::current_exe() {
+        if let Some(name) = current_exe.file_name() {
+            let is_ezcmd = name == "ezcmd" || name == "ezcmd.exe";
+            let is_in_target = current_exe.components().any(|c| c.as_os_str() == "target");
+            if is_ezcmd && !is_in_target && !paths.contains(&current_exe) {
+                paths.push(current_exe);
+            }
+        }
+    }
+
     paths
 }
 
-/// Check whether ezcmd appears to be installed (any known binary or config marker exists).
+/// Check whether ezcmd appears to be installed (any known binary, symlink, or config marker exists).
 fn is_installed() -> bool {
     // Check installation marker
     if let Some(marker) = welcome::get_marker_path() {
-        if marker.exists() {
+        if path_exists_or_symlink(&marker) {
             return true;
         }
     }
     // Check known binary locations
     for path in installed_paths() {
-        if path.exists() {
+        if path_exists_or_symlink(&path) {
             return true;
         }
     }
@@ -98,7 +126,7 @@ pub fn run_uninstall<W: Write>(w: &mut W, yes: bool) -> io::Result<i32> {
     let mut removed_count = 0;
 
     for path in installed_paths() {
-        if path.exists() {
+        if path_exists_or_symlink(&path) {
             match std::fs::remove_file(&path) {
                 Ok(_) => {
                     writeln!(w, "  Removed: {}", path.display())?;
@@ -113,7 +141,7 @@ pub fn run_uninstall<W: Write>(w: &mut W, yes: bool) -> io::Result<i32> {
 
     // ── Remove configuration & marker directory ────────────────────────
     if let Some(cfg_dir) = welcome::get_config_dir() {
-        if cfg_dir.exists() && std::fs::remove_dir_all(&cfg_dir).is_ok() {
+        if path_exists_or_symlink(&cfg_dir) && std::fs::remove_dir_all(&cfg_dir).is_ok() {
             writeln!(w, "  Removed config: {}", cfg_dir.display())?;
             removed_count += 1;
         }
