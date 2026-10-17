@@ -4,7 +4,7 @@
 
 ezCMD is a tiny, offline command-line cheatsheet. Instead of a flat list, you describe a task (`initializing repo`) and it prints the full ordered workflow for **your** operating system, with a one-line explanation beside every command.
 
-> **Status:** 🚧 In development. This README describes the intended v0.1 behavior, and details will change as the tool takes shape. Visual guides are coming.
+> **Status:** v0.1 — fully functional. Grab a binary from [Releases](https://github.com/ItzEvhyx/ezCMD/releases) or build from source.
 
 ---
 
@@ -13,18 +13,18 @@ ezCMD is a tiny, offline command-line cheatsheet. Instead of a flat list, you de
 ```
 $ ezcmd initializing repo
 
- ___[ Initializing a Repo ]_________________________________________________
+ ___[ Initializing a Repo ]__________________________________________________________
 |
-|  git init                        --- Initializes a repo in the current folder
-|  git add .                       --- Stages all new and changed files
-|  git commit -m "Initial commit"  --- Saves the staged files as the first commit
-|  git branch -M main              --- Renames the current branch to main
-|  git remote add origin <url>     --- Links the repo to a remote on GitHub
-|  git push -u origin main         --- Uploads main and sets it as the upstream
-|___________________________________________________________________________
+|  git init                          --- Initializes a repo in the current folder
+|  git add .                         --- Stages all new and changed files
+|  git commit -m "Initial commit"    --- Saves the staged files as the first commit
+|  git branch -M main                --- Renames the current branch to main
+|  git remote add origin <repo-url>  --- Links the repo to a remote on GitHub
+|  git push -u origin main           --- Uploads main and sets it as the upstream
+|____________________________________________________________________________________
 ```
 
-<!-- TODO: replace with a screenshot / GIF of the colored output -->
+> In a real terminal the frame and title are dimmed, commands are **bold**, and `<placeholders>` are highlighted in yellow. Color switches off automatically in pipes or when `NO_COLOR` is set.
 
 ---
 
@@ -91,9 +91,9 @@ On Windows, shell commands target **CMD**.
 
 | OS | Status |
 |---|---|
-| Windows 10+ | Planned |
-| Linux | Planned |
-| macOS | Planned |
+| Windows 10+ | ✅ Supported |
+| Linux (x86_64 / aarch64) | ✅ Supported |
+| macOS (x86_64 / Apple Silicon) | ✅ Supported |
 
 Works in any terminal emulator.
 
@@ -101,19 +101,20 @@ Works in any terminal emulator.
 
 ## Installation
 
-Not released yet. Planned options:
+### Prebuilt binaries
 
-```
-# From source (requires Rust)
-git clone https://github.com/<your-username>/ezCMD.git
+Download the latest release for your platform from [GitHub Releases](https://github.com/ItzEvhyx/ezCMD/releases), extract, and place the `ezcmd` binary somewhere on your `PATH`.
+
+### From source
+
+```bash
+git clone https://github.com/ItzEvhyx/ezCMD.git
 cd ezCMD
 cargo build --release
 # binary: target/release/ezcmd
-
-# Later
-cargo install ezcmd
-# prebuilt binaries via GitHub Releases
 ```
+
+Requires Rust 1.70+.
 
 ---
 
