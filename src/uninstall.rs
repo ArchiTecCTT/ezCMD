@@ -23,7 +23,7 @@ pub fn run_uninstall<W: Write>(w: &mut W, yes: bool) -> io::Result<i32> {
             #[cfg(windows)]
             {
                 let temp_name = current_exe.with_extension("exe.old");
-                if let Ok(_) = std::fs::rename(&current_exe, &temp_name) {
+                if std::fs::rename(&current_exe, &temp_name).is_ok() {
                     let _ = std::fs::remove_file(&temp_name);
                     writeln!(w, "Removed executable: {}", current_exe.display())?;
                     removed_count += 1;
@@ -73,21 +73,17 @@ pub fn run_uninstall<W: Write>(w: &mut W, yes: bool) -> io::Result<i32> {
     }
 
     for path in check_paths {
-        if path.exists() {
-            if let Ok(_) = std::fs::remove_file(&path) {
-                writeln!(w, "Removed installed path: {}", path.display())?;
-                removed_count += 1;
-            }
+        if path.exists() && std::fs::remove_file(&path).is_ok() {
+            writeln!(w, "Removed installed path: {}", path.display())?;
+            removed_count += 1;
         }
     }
 
     // 3. Remove configuration & marker directory
     if let Some(cfg_dir) = welcome::get_config_dir() {
-        if cfg_dir.exists() {
-            if let Ok(_) = std::fs::remove_dir_all(&cfg_dir) {
-                writeln!(w, "Removed configuration: {}", cfg_dir.display())?;
-                removed_count += 1;
-            }
+        if cfg_dir.exists() && std::fs::remove_dir_all(&cfg_dir).is_ok() {
+            writeln!(w, "Removed configuration: {}", cfg_dir.display())?;
+            removed_count += 1;
         }
     }
 
@@ -98,10 +94,7 @@ pub fn run_uninstall<W: Write>(w: &mut W, yes: bool) -> io::Result<i32> {
             "✓ ezcmd has been successfully uninstalled from your machine."
         )?;
     } else {
-        writeln!(
-            w,
-            "✓ ezcmd cleanup completed."
-        )?;
+        writeln!(w, "✓ ezcmd cleanup completed.")?;
     }
     writeln!(w, "Thank you for using ezcmd!")?;
     Ok(0)

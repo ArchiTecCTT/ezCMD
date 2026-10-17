@@ -78,16 +78,12 @@ fn run<W: Write>(args: &[String], out: &mut W) -> io::Result<i32> {
             writeln!(out, "Run 'ezcmd --help' to see all commands.")?;
             Ok(0)
         }
-        Action::Install => {
-            ezcmd::welcome::run_install(out, render_ctx.color)
-        }
+        Action::Install => ezcmd::welcome::run_install(out, render_ctx.color),
         Action::Welcome => {
             ezcmd::welcome::print_welcome(out, render_ctx.color)?;
             Ok(0)
         }
-        Action::Uninstall { yes } => {
-            ezcmd::uninstall::run_uninstall(out, yes)
-        }
+        Action::Uninstall { yes } => ezcmd::uninstall::run_uninstall(out, yes),
         Action::Version => {
             writeln!(out, "ezcmd {}", env!("CARGO_PKG_VERSION"))?;
             Ok(0)

@@ -73,14 +73,14 @@ $ ezcmd initializing repo
 #### Linux & macOS (Bash / Zsh / Fish)
 Run the automated installation script:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ItzEvhyx/ezcmd/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.sh | bash
 ```
 *The installer automatically downloads the prebuilt binary for your OS and architecture, copies it to `~/.local/bin/ezcmd`, confirms successful installation, and prints the ASCII welcome banner.*
 
 #### Windows (PowerShell)
 Open PowerShell and run:
 ```powershell
-irm https://raw.githubusercontent.com/ItzEvhyx/ezcmd/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.ps1 | iex
 ```
 
 </details>
@@ -148,8 +148,8 @@ setx PATH "%PATH%;%USERPROFILE%\.local\bin"
 <br>
 
 ```bash
-git clone https://github.com/ItzEvhyx/ezcmd.git
-cd ezcmd
+git clone https://github.com/ItzEvhyx/ezCMD.git
+cd ezCMD
 cargo build --release
 
 # Run self-installer to place into ~/.local/bin and show welcome banner
@@ -244,7 +244,8 @@ This cleans up the binary, symlinks from `~/.local/bin`, and any configuration f
 Created by **ItzEvhyx**
 
 - **GitHub:** [@ItzEvhyx](https://github.com/ItzEvhyx)
-- **Repository:** [https://github.com/ItzEvhyx/ezcmd](https://github.com/ItzEvhyx/ezcmd)
+- **Repository:** [https://github.com/ItzEvhyx/ezCMD](https://github.com/ItzEvhyx/ezCMD)
+
 
 ---
 

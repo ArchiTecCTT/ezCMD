@@ -4,7 +4,7 @@
 
 set -e
 
-REPO="ItzEvhyx/ezcmd"
+REPO="ItzEvhyx/ezCMD"
 INSTALL_DIR="${HOME}/.local/bin"
 BIN_NAME="ezcmd"
 TARGET_PATH="${INSTALL_DIR}/${BIN_NAME}"
@@ -12,61 +12,57 @@ TARGET_PATH="${INSTALL_DIR}/${BIN_NAME}"
 echo "Installing ezCMD..."
 mkdir -p "${INSTALL_DIR}"
 
-# If running from within the repository and release binary exists, install directly
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || pwd)"
-if [ -f "${SCRIPT_DIR}/target/release/ezcmd" ]; then
-    rm -f "${TARGET_PATH}"
-    cp "${SCRIPT_DIR}/target/release/ezcmd" "${TARGET_PATH}"
-    chmod +x "${TARGET_PATH}"
-elif [ -f "${SCRIPT_DIR}/ezcmd" ]; then
-    rm -f "${TARGET_PATH}"
-    cp "${SCRIPT_DIR}/ezcmd" "${TARGET_PATH}"
-    chmod +x "${TARGET_PATH}"
+# Detect OS & Arch for prebuilt release download
+OS="$(uname -s)"
+ARCH="$(uname -m)"
 
-else
-    # Detect OS & Arch for prebuilt release download
-    OS="$(uname -s)"
-    ARCH="$(uname -m)"
-
-    case "${OS}" in
-        Linux*)
-            case "${ARCH}" in
-                x86_64) ASSET_TARGET="x86_64-unknown-linux-gnu" ;;
-                aarch64|arm64) ASSET_TARGET="aarch64-unknown-linux-gnu" ;;
-                *) echo "Unsupported Linux architecture: ${ARCH}"; exit 1 ;;
-            esac
-            ;;
-        Darwin*)
-            case "${ARCH}" in
-                x86_64) ASSET_TARGET="x86_64-apple-darwin" ;;
-                arm64|aarch64) ASSET_TARGET="aarch64-apple-darwin" ;;
-                *) echo "Unsupported macOS architecture: ${ARCH}"; exit 1 ;;
-            esac
-            ;;
-        *)
-            echo "Unsupported OS: ${OS}. Please use install.ps1 on Windows."
-            exit 1
-            ;;
-    esac
-
-    TMP_DIR="$(mktemp -d)"
-    TAR_URL="https://github.com/${REPO}/releases/latest/download/ezcmd-${ASSET_TARGET}.tar.gz"
-
-    echo "Downloading ${TAR_URL}..."
-    if command -v curl >/dev/null 2>&1; then
-        curl -fsSL "${TAR_URL}" -o "${TMP_DIR}/ezcmd.tar.gz"
-    elif command -v wget >/dev/null 2>&1; then
-        wget -qO "${TMP_DIR}/ezcmd.tar.gz" "${TAR_URL}"
-    else
-        echo "Error: curl or wget is required to download ezcmd."
+case "${OS}" in
+    Linux*)
+        case "${ARCH}" in
+            x86_64) ASSET_TARGET="x86_64-unknown-linux-musl" ;;
+            aarch64|arm64) ASSET_TARGET="aarch64-unknown-linux-musl" ;;
+            *) echo "Unsupported Linux architecture: ${ARCH}"; exit 1 ;;
+        esac
+        ;;
+    Darwin*)
+        case "${ARCH}" in
+            x86_64) ASSET_TARGET="x86_64-apple-darwin" ;;
+            arm64|aarch64) ASSET_TARGET="aarch64-apple-darwin" ;;
+            *) echo "Unsupported macOS architecture: ${ARCH}"; exit 1 ;;
+        esac
+        ;;
+    *)
+        echo "Unsupported OS: ${OS}. Please use install.ps1 on Windows."
         exit 1
-    fi
+        ;;
+esac
 
-    tar -xzf "${TMP_DIR}/ezcmd.tar.gz" -C "${TMP_DIR}"
-    mv "${TMP_DIR}/ezcmd" "${TARGET_PATH}"
-    chmod +x "${TARGET_PATH}"
-    rm -rf "${TMP_DIR}"
+TMP_DIR="$(mktemp -d)"
+
+# Try GitHub API first to find exact asset URL
+TAR_URL=""
+LATEST_JSON=$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null || true)
+if [ -n "$LATEST_JSON" ]; then
+    TAR_URL=$(echo "$LATEST_JSON" | grep "browser_download_url" | grep -v "\.sha256" | grep "${ASSET_TARGET}\.tar\.gz" | head -n 1 | cut -d '"' -f 4 || true)
 fi
+
+# Fallback to direct download URLs
+if [ -z "$TAR_URL" ]; then
+    TAR_URL="https://github.com/${REPO}/releases/download/v0.1.0/ezcmd-v0.1.0-${ASSET_TARGET}.tar.gz"
+fi
+
+echo "Downloading ${TAR_URL}..."
+if ! curl -fsSL "${TAR_URL}" -o "${TMP_DIR}/ezcmd.tar.gz" 2>/dev/null; then
+    FALLBACK_URL="https://github.com/${REPO}/releases/download/v0.1.0/ezcmd-v0.1.0-${ASSET_TARGET}.tar.gz"
+    echo "Trying fallback ${FALLBACK_URL}..."
+    curl -fsSL "${FALLBACK_URL}" -o "${TMP_DIR}/ezcmd.tar.gz"
+fi
+
+tar -xzf "${TMP_DIR}/ezcmd.tar.gz" -C "${TMP_DIR}"
+rm -f "${TARGET_PATH}"
+mv "${TMP_DIR}/ezcmd" "${TARGET_PATH}"
+chmod +x "${TARGET_PATH}"
+rm -rf "${TMP_DIR}"
 
 echo ""
 echo "✓ ezcmd was successfully installed to ${TARGET_PATH}!"
@@ -85,5 +81,38 @@ case ":${PATH}:" in
         ;;
 esac
 
-# Trigger welcome banner
-"${TARGET_PATH}" --welcome
+# Automatically show the welcome banner
+if ! "${TARGET_PATH}" --welcome 2>/dev/null; then
+    cat << 'EOF'
+                      /$$$$$$  /$$      /$$ /$$$$$$$ 
+                     /$$__  $$| $$$    /$$$| $$__  $$
+  /$$$$$$  /$$$$$$$$| $$  \__/| $$$$  /$$$$| $$  \ $$
+ /$$__  $$|____ /$$/| $$      | $$ $$/$$ $$| $$  | $$
+| $$$$$$$$   /$$$$/ | $$      | $$  $$$| $$| $$  | $$
+| $$_____/  /$$__/  | $$    $$| $$\  $ | $$| $$  | $$
+|  $$$$$$$ /$$$$$$$$|  $$$$$$/| $$ \/  | $$| $$$$$$$/
+ \_______/|________/ \______/ |__/     |__/|_______/ 
+
+  Welcome to ezCMD! Find the right command, in order.
+  Never browse Stack Overflow for everyday terminal commands again.
+
+  QUICK START / HOW TO USE:
+    ezcmd <query>                   Search for workflows or commands
+    ezcmd --help                    Show all sections for your OS
+    ezcmd --help -git               Show Git workflow cheatsheet
+    ezcmd --help -shell             Show Shell command cheatsheet
+    ezcmd --uninstall               Uninstall ezcmd from your machine
+
+  TRY THESE QUERIES:
+    ezcmd initializing repo
+    ezcmd undo last commit
+    ezcmd how to branch
+    ezcmd delete files
+
+  AUTHOR & CREDITS:
+    Created by ItzEvhyx (Me)
+    GitHub: https://github.com/ItzEvhyx
+    Repo:   https://github.com/ItzEvhyx/ezcmd
+EOF
+fi
+

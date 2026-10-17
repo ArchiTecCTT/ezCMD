@@ -18,9 +18,11 @@ pub enum Action {
         tool: Option<String>,
         section: Option<String>,
     },
-    Uninstall { yes: bool }, // --uninstall
-    Welcome,                 // --welcome
-    Install,                 // --install
+    Uninstall {
+        yes: bool,
+    }, // --uninstall
+    Welcome, // --welcome
+    Install, // --install
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -128,7 +130,6 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Invocation, CliError> {
             action: Action::Install,
         });
     }
-
 
     // Check for --help before bare `--`
     let has_help = args[..pre_dash_limit]

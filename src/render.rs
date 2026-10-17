@@ -285,13 +285,7 @@ pub fn render_section<W: Write>(
     // Bottom rule: `|` + `_` to fill width, ending with `|`
     let bottom_underscores = "_".repeat(frame_width.saturating_sub(2));
     if ctx.color {
-        writeln!(
-            w,
-            "{}|{}|{}",
-            term::DIM,
-            bottom_underscores,
-            term::RESET
-        )?;
+        writeln!(w, "{}|{}|{}", term::DIM, bottom_underscores, term::RESET)?;
     } else {
         writeln!(w, "|{}|", bottom_underscores)?;
     }

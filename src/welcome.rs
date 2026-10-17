@@ -106,14 +106,17 @@ pub fn run_install<W: Write>(w: &mut W, color: bool) -> io::Result<i32> {
             term::RESET
         )?;
     } else {
-        writeln!(w, "✓ Successfully installed ezcmd to {}!", dest_exe.display())?;
+        writeln!(
+            w,
+            "✓ Successfully installed ezcmd to {}!",
+            dest_exe.display()
+        )?;
     }
     writeln!(w)?;
 
     print_welcome(w, color)?;
     Ok(0)
 }
-
 
 pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
     if color {
@@ -136,7 +139,12 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
             "  Never browse Stack Overflow for everyday terminal commands again.\n"
         )?;
 
-        writeln!(w, "  {}QUICK START / HOW TO USE:{}", term::CYAN_BOLD, term::RESET)?;
+        writeln!(
+            w,
+            "  {}QUICK START / HOW TO USE:{}",
+            term::CYAN_BOLD,
+            term::RESET
+        )?;
         writeln!(
             w,
             "    {}ezcmd <query>{}                   Search for workflows or commands",
@@ -203,11 +211,26 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
         )?;
 
         writeln!(w, "  QUICK START / HOW TO USE:")?;
-        writeln!(w, "    ezcmd <query>                   Search for workflows or commands")?;
-        writeln!(w, "    ezcmd --help                    Show all sections for your OS")?;
-        writeln!(w, "    ezcmd --help -git               Show Git workflow cheatsheet")?;
-        writeln!(w, "    ezcmd --help -shell             Show Shell command cheatsheet")?;
-        writeln!(w, "    ezcmd --uninstall               Uninstall ezcmd from your machine")?;
+        writeln!(
+            w,
+            "    ezcmd <query>                   Search for workflows or commands"
+        )?;
+        writeln!(
+            w,
+            "    ezcmd --help                    Show all sections for your OS"
+        )?;
+        writeln!(
+            w,
+            "    ezcmd --help -git               Show Git workflow cheatsheet"
+        )?;
+        writeln!(
+            w,
+            "    ezcmd --help -shell             Show Shell command cheatsheet"
+        )?;
+        writeln!(
+            w,
+            "    ezcmd --uninstall               Uninstall ezcmd from your machine"
+        )?;
         writeln!(w)?;
         writeln!(w, "  TRY THESE QUERIES:")?;
         writeln!(w, "    ezcmd initializing repo")?;

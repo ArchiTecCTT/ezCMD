@@ -1,7 +1,7 @@
 # ezCMD automated installer for Windows PowerShell
 $ErrorActionPreference = "Stop"
 
-$Repo = "ItzEvhyx/ezcmd"
+$Repo = "ItzEvhyx/ezCMD"
 $InstallDir = "$env:USERPROFILE\.local\bin"
 $ExePath = "$InstallDir\ezcmd.exe"
 
@@ -18,7 +18,20 @@ if ($ScriptDir -and (Test-Path "$ScriptDir\target\release\ezcmd.exe")) {
     Copy-Item "$ScriptDir\ezcmd.exe" $ExePath -Force
 } else {
     $AssetTarget = "x86_64-pc-windows-msvc"
-    $ZipUrl = "https://github.com/$Repo/releases/latest/download/ezcmd-$AssetTarget.zip"
+    $ZipUrl = ""
+    try {
+        $ReleaseJson = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest" -Headers @{ "User-Agent" = "ezcmd-installer" }
+        $Asset = $ReleaseJson.assets | Where-Object { $_.name -like "*$AssetTarget*.zip" -and $_.name -notlike "*.sha256" } | Select-Object -First 1
+        if ($Asset) {
+            $ZipUrl = $Asset.browser_download_url
+        }
+    } catch {
+        # ignore api error/rate limit
+    }
+    if (-not $ZipUrl) {
+        $ZipUrl = "https://github.com/$Repo/releases/download/v0.1.0/ezcmd-v0.1.0-$AssetTarget.zip"
+    }
+
     $TempZip = "$env:TEMP\ezcmd.zip"
     $TempExtract = "$env:TEMP\ezcmd_extract"
 
@@ -42,4 +55,38 @@ Write-Host ""
 Write-Host "✓ ezcmd was successfully installed to $ExePath!" -ForegroundColor Green
 Write-Host ""
 
-& "$ExePath" --welcome
+try {
+    & "$ExePath" --welcome
+} catch {
+    Write-Host @"
+                      /$$$$$$  /$$      /$$ /$$$$$$$ 
+                     /$$__  $$| $$$    /$$$| $$__  $$
+  /$$$$$$  /$$$$$$$$| $$  \__/| $$$$  /$$$$| $$  \ $$
+ /$$__  $$|____ /$$/| $$      | $$ $$/$$ $$| $$  | $$
+| $$$$$$$$   /$$$$/ | $$      | $$  $$$| $$| $$  | $$
+| $$_____/  /$$__/  | $$    $$| $$\  $ | $$| $$  | $$
+|  $$$$$$$ /$$$$$$$$|  $$$$$$/| $$ \/  | $$| $$$$$$$/
+ \_______/|________/ \______/ |__/     |__/|_______/ 
+
+  Welcome to ezCMD! Find the right command, in order.
+  Never browse Stack Overflow for everyday terminal commands again.
+
+  QUICK START / HOW TO USE:
+    ezcmd <query>                   Search for workflows or commands
+    ezcmd --help                    Show all sections for your OS
+    ezcmd --help -git               Show Git workflow cheatsheet
+    ezcmd --help -shell             Show Shell command cheatsheet
+    ezcmd --uninstall               Uninstall ezcmd from your machine
+
+  TRY THESE QUERIES:
+    ezcmd initializing repo
+    ezcmd undo last commit
+    ezcmd how to branch
+    ezcmd delete files
+
+  AUTHOR & CREDITS:
+    Created by ItzEvhyx (Me)
+    GitHub: https://github.com/ItzEvhyx
+    Repo:   https://github.com/ItzEvhyx/ezcmd
+"@
+}
