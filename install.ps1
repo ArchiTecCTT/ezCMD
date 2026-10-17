@@ -92,7 +92,7 @@ try {
     ezcmd delete files
 
   AUTHOR:
-    Created by ItzEvhyx (Me)
+    Created by ItzEvhyx
     GitHub: https://github.com/ItzEvhyx
     Repo:   https://github.com/ItzEvhyx/ezCMD
 "@

@@ -228,12 +228,7 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
         writeln!(w)?;
 
         writeln!(w, "  {}✍️ AUTHOR:{}", C_MAGENTA, term::RESET)?;
-        writeln!(
-            w,
-            "    Created with ❤️  by {}ItzEvhyx{} (Me)",
-            term::BOLD,
-            term::RESET
-        )?;
+        writeln!(w, "    Created by {}ItzEvhyx{}", term::BOLD, term::RESET)?;
         writeln!(
             w,
             "    GitHub: {}https://github.com/ItzEvhyx{}",
@@ -308,7 +303,7 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
         )?;
 
         writeln!(w, "  AUTHOR:")?;
-        writeln!(w, "    Created with ❤️  by ItzEvhyx (Me)")?;
+        writeln!(w, "    Created by ItzEvhyx")?;
         writeln!(w, "    GitHub: https://github.com/ItzEvhyx")?;
         writeln!(w, "    Repo:   https://github.com/ItzEvhyx/ezCMD\n")?;
     }
