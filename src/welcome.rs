@@ -194,7 +194,7 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
 
         writeln!(
             w,
-            "  {}⚡ POPULAR WORKFLOWS TO TRY:{}",
+            "  {}⚡ WORKFLOWS TO TRY:{}",
             C_YELLOW,
             term::RESET
         )?;
@@ -232,7 +232,7 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
         )?;
         writeln!(w)?;
 
-        writeln!(w, "  {}✨ AUTHOR & COMMUNITY:{}", C_MAGENTA, term::RESET)?;
+        writeln!(w, "  {}✍️ AUTHOR:{}", C_MAGENTA, term::RESET)?;
         writeln!(
             w,
             "    Created with ❤️  by {}ItzEvhyx{} (Me)",
@@ -294,7 +294,7 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
             "  +------------------------------------------------------------------------+\n"
         )?;
 
-        writeln!(w, "  POPULAR WORKFLOWS TO TRY:")?;
+        writeln!(w, "  WORKFLOWS TO TRY:")?;
         writeln!(
             w,
             "    ezcmd initializing repo       # Starting a new Git repo"
@@ -312,7 +312,7 @@ pub fn print_welcome<W: Write>(w: &mut W, color: bool) -> io::Result<()> {
             "    ezcmd delete files             # File & directory cleanup\n"
         )?;
 
-        writeln!(w, "  AUTHOR & COMMUNITY:")?;
+        writeln!(w, "  AUTHOR:")?;
         writeln!(w, "    Created with ❤️  by ItzEvhyx (Me)")?;
         writeln!(w, "    GitHub: https://github.com/ItzEvhyx")?;
         writeln!(w, "    Repo:   https://github.com/ItzEvhyx/ezCMD\n")?;

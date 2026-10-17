@@ -85,13 +85,13 @@ try {
     ezcmd --help -shell             Show Shell command cheatsheet
     ezcmd --uninstall               Uninstall ezcmd from your machine
 
-  TRY THESE QUERIES:
+  WORKFLOWS TO TRY:
     ezcmd initializing repo
     ezcmd undo last commit
     ezcmd how to branch
     ezcmd delete files
 
-  AUTHOR & CREDITS:
+  AUTHOR:
     Created by ItzEvhyx (Me)
     GitHub: https://github.com/ItzEvhyx
     Repo:   https://github.com/ItzEvhyx/ezCMD
