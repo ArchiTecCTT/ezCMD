@@ -11,7 +11,8 @@ if (-not (Test-Path $InstallDir)) {
     New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 }
 
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path 2>$null
+# $PSScriptRoot is empty when piped into iex (irm | iex)
+$ScriptDir = $PSScriptRoot
 if ($ScriptDir -and (Test-Path "$ScriptDir\target\release\ezcmd.exe")) {
     Copy-Item "$ScriptDir\target\release\ezcmd.exe" $ExePath -Force
 } elseif ($ScriptDir -and (Test-Path "$ScriptDir\ezcmd.exe")) {
