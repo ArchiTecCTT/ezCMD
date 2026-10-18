@@ -440,7 +440,7 @@ function Invoke-InShell {
     $timedOut = -not $p.WaitForExit($TimeoutSec * 1000)
     if ($timedOut) { try { $p.Kill($true) } catch {} ; $p.WaitForExit(10000) | Out-Null }
     $out = $outTask.GetAwaiter().GetResult()
-    $err = Decode-Clixml ($errTask.GetAwaiter().GetResult())
+    $err = (Decode-Clixml ($errTask.GetAwaiter().GetResult())) -replace "\e\[[0-9;?]*[A-Za-z]", ''
     $sw.Stop()
 
     $ok = $null; $code = $null; $probeVal = $null
@@ -459,9 +459,12 @@ function Invoke-InShell {
 }
 
 function First-ErrorLine([string] $err) {
-    $lines = $err -split "`r?`n" | ForEach-Object { $_.Trim() } |
-        Where-Object { $_ -and $_ -notmatch '^(At line|At char|\+|~|CategoryInfo|FullyQualifiedErrorId|\+ CategoryInfo|\+ FullyQualified)' }
-    ($lines | Select-Object -First 1)
+    $lines = @($err -split "`r?`n" | ForEach-Object { $_.Trim() } |
+        Where-Object { $_ -and $_ -notmatch '^(At line|At char|\+|~|\||Line \||CategoryInfo|FullyQualifiedErrorId)' })
+    if (-not $lines) { return $null }
+    # pwsh may print "Cmdlet:" and the message on separate lines
+    if ($lines[0] -match ':$' -and $lines.Count -gt 1) { return "$($lines[0]) $($lines[1])" }
+    $lines[0]
 }
 
 # ---------------------------------------------------------------- main loop
@@ -481,7 +484,7 @@ foreach ($rc in $Resolved) {
         $n++
         $dir = Join-Path $Base ("t{0:d3}-{1}" -f $n, $sh)
         Copy-Item -Recurse -Force $Template $dir
-        $envs = @{ GIT_CONFIG_GLOBAL = "$dir\gitconfig"; GIT_EDITOR = 'true'; GIT_TERMINAL_PROMPT = '0' }
+        $envs = @{ GIT_CONFIG_GLOBAL = "$dir\gitconfig"; GIT_EDITOR = 'true'; GIT_TERMINAL_PROMPT = '0'; NO_COLOR = '1' }
         $env:GIT_CONFIG_GLOBAL = $envs.GIT_CONFIG_GLOBAL
         $repo = Join-Path $dir 'repo'
         Push-Location $repo
