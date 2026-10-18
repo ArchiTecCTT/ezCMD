@@ -69,7 +69,7 @@ $ ezcmd initializing repo
 |:---:|:---|:---|
 | <img src="https://api.iconify.design/lucide/target.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Task-Oriented Search** | Search for what you intend to accomplish (`initializing repo`, `undo last commit`, `delete files`) rather than trying to remember syntax. |
 | <img src="https://api.iconify.design/lucide/search.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Intelligent Fuzzy Matcher** | Handles typos, transposed words, and natural phrasing using custom token-stemming and Damerau-Levenshtein distance. |
-| <img src="https://api.iconify.design/lucide/monitor.svg?color=%2300b0ff" width="22" height="22" alt=""> | **OS-Aware Resolution** | Automatically detects whether you are on Linux, macOS, or Windows CMD and presents commands that work for your operating system. |
+| <img src="https://api.iconify.design/lucide/monitor.svg?color=%2300b0ff" width="22" height="22" alt=""> | **OS-Aware Resolution** | Automatically detects whether you are on Linux, macOS, or Windows, and on Windows whether you are in Command Prompt or PowerShell, and presents commands that work there. Override with `--shell cmd` or `--shell powershell`. |
 | <img src="https://api.iconify.design/lucide/package.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Fully Offline & Self-Contained** | Cheatsheet data is compiled directly into the binary at build time. Zero network requests, zero telemetry, zero background daemons. |
 | <img src="https://api.iconify.design/lucide/zap.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Blazing Performance** | Launches, matches, formats, and terminates in **under 15 milliseconds** with less than 1.2 MB footprint. |
 | <img src="https://api.iconify.design/lucide/square.svg?color=%2300b0ff" width="22" height="22" alt=""> | **Fully Enclosed Box Frame** | Retro-modern ASCII borders enclose every output neatly on all sides. |
@@ -235,6 +235,7 @@ ezcmd --version
 | `ezcmd --help -<tool>` | Show all sections for a tool (e.g. -git, -shell) |
 | `ezcmd --help -<tool> -<section>` | Show a specific section |
 | `ezcmd --help -<os>` | View cheatsheet as Linux, macOS, or Windows |
+| `ezcmd --shell <cmd\|powershell> <query>` | Show Windows commands for Command Prompt or PowerShell (default: detected) |
 | `ezcmd --plain <query>` | Raw plain output (no ANSI, no box frames) |
 | `ezcmd --install` | Install ezcmd to PATH + show welcome |
 | `ezcmd --welcome` | Display ASCII welcome banner & quickstart |

@@ -1,5 +1,6 @@
 use crate::model::Section;
 use crate::os::Os;
+use crate::shell::Shell;
 use crate::term;
 use std::io::{self, Write};
 
@@ -8,6 +9,8 @@ pub struct RenderCtx {
     pub color: bool,
     pub plain: bool,
     pub width: usize,
+    /// Windows shell to resolve commands for (ignored on Linux and macOS).
+    pub shell: Shell,
 }
 
 impl Default for RenderCtx {
@@ -16,6 +19,7 @@ impl Default for RenderCtx {
             color: false,
             plain: false,
             width: 80,
+            shell: Shell::Cmd,
         }
     }
 }
@@ -69,13 +73,13 @@ pub fn render_section<W: Write>(
     ctx: &RenderCtx,
 ) -> io::Result<()> {
     // If no command resolves for the OS, omit the whole section (Section 9.4)
-    if !section.available_on(os) {
+    if !section.available_for(os, ctx.shell) {
         return Ok(());
     }
 
     let mut prepared = Vec::new();
     for cmd in section.commands {
-        if let Some(resolved) = cmd.resolve(os) {
+        if let Some(resolved) = cmd.resolve_for(os, ctx.shell) {
             prepared.push(PreparedCommand {
                 cmd_text: resolved.to_string(),
                 note_text: cmd.note.to_string(),
@@ -302,7 +306,7 @@ pub fn render_sections<W: Write>(
 ) -> io::Result<()> {
     let mut first = true;
     for section in sections {
-        if !section.available_on(os) {
+        if !section.available_for(os, ctx.shell) {
             continue;
         }
         if !first {
@@ -335,6 +339,7 @@ mod tests {
             cmd: Some("git init"),
             unix: None,
             windows: None,
+            powershell: None,
             linux: None,
             macos: None,
         }];
@@ -347,6 +352,7 @@ mod tests {
             color: false,
             plain: true,
             width: 80,
+            shell: Shell::Cmd,
         };
         let mut buf = Vec::new();
         render_section(&mut buf, &sec, Os::Linux, &ctx).expect("render");

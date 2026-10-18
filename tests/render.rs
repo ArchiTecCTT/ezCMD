@@ -2,6 +2,7 @@ use ezcmd::content::TOOLS;
 use ezcmd::model::{Command, Section};
 use ezcmd::os::Os;
 use ezcmd::render::{render_section, RenderCtx};
+use ezcmd::shell::Shell;
 
 fn get_section<'a>(tool_name: &str, title: &str) -> &'a Section {
     let tool = TOOLS
@@ -21,6 +22,7 @@ fn test_snapshot_wide_layout() {
         color: false,
         plain: false,
         width: 100,
+        shell: Shell::Cmd,
     };
     let mut buf = Vec::new();
     render_section(&mut buf, sec, Os::Linux, &ctx).expect("render");
@@ -35,6 +37,7 @@ fn test_snapshot_wide_layout_colored() {
         color: true,
         plain: false,
         width: 100,
+        shell: Shell::Cmd,
     };
     let mut buf = Vec::new();
     render_section(&mut buf, sec, Os::Linux, &ctx).expect("render");
@@ -49,6 +52,7 @@ fn test_snapshot_narrow_layout() {
         color: false,
         plain: false,
         width: 60,
+        shell: Shell::Cmd,
     };
     let mut buf = Vec::new();
     render_section(&mut buf, sec, Os::Linux, &ctx).expect("render");
@@ -63,6 +67,7 @@ fn test_snapshot_plain_mode() {
         color: false,
         plain: true,
         width: 80,
+        shell: Shell::Cmd,
     };
     let mut buf = Vec::new();
     render_section(&mut buf, sec, Os::Linux, &ctx).expect("render");
@@ -78,6 +83,7 @@ fn test_snapshot_no_equivalent() {
             cmd: None,
             unix: None,
             windows: Some("cd /d D:\\<folder>"),
+            powershell: None,
             linux: None,
             macos: None,
         },
@@ -86,6 +92,7 @@ fn test_snapshot_no_equivalent() {
             cmd: Some("cd <folder>"),
             unix: None,
             windows: None,
+            powershell: None,
             linux: None,
             macos: None,
         },
@@ -100,6 +107,7 @@ fn test_snapshot_no_equivalent() {
         color: false,
         plain: false,
         width: 80,
+        shell: Shell::Cmd,
     };
     let mut buf = Vec::new();
     render_section(&mut buf, &sec, Os::Linux, &ctx).expect("render");
@@ -114,6 +122,7 @@ fn test_snapshot_placeholder_highlighting() {
         color: true,
         plain: false,
         width: 80,
+        shell: Shell::Cmd,
     };
     let mut buf = Vec::new();
     render_section(&mut buf, sec, Os::Linux, &ctx).expect("render");
@@ -128,12 +137,22 @@ fn test_snapshot_per_os_output() {
         color: false,
         plain: false,
         width: 80,
+        shell: Shell::Cmd,
     };
 
     let mut buf_win = Vec::new();
     render_section(&mut buf_win, sec, Os::Windows, &ctx).expect("render windows");
     let out_win = String::from_utf8(buf_win).expect("utf8");
     insta::assert_snapshot!("navigating_directories_windows", out_win);
+
+    let ps_ctx = RenderCtx {
+        shell: Shell::PowerShell,
+        ..ctx
+    };
+    let mut buf_ps = Vec::new();
+    render_section(&mut buf_ps, sec, Os::Windows, &ps_ctx).expect("render powershell");
+    let out_ps = String::from_utf8(buf_ps).expect("utf8");
+    insta::assert_snapshot!("navigating_directories_windows_powershell", out_ps);
 
     let mut buf_linux = Vec::new();
     render_section(&mut buf_linux, sec, Os::Linux, &ctx).expect("render linux");

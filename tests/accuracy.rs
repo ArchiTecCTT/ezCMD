@@ -1,6 +1,7 @@
 use ezcmd::content::TOOLS;
 use ezcmd::matcher::{search, SearchResult};
 use ezcmd::os::Os;
+use ezcmd::shell::Shell;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -36,7 +37,7 @@ fn test_query_accuracy() {
 
         for os in targets {
             total_runs += 1;
-            let result = search(TOOLS, os, &case.query, None);
+            let result = search(TOOLS, os, Shell::Cmd, &case.query, None);
 
             let mut is_top1 = false;
             let mut is_top3 = false;

@@ -145,3 +145,34 @@ fn test_initializing_repo_section() {
         assert_eq!(cmd.note, *expected_note);
     }
 }
+
+/// Forms that only work in cmd.exe; each needs a `powershell` alternative.
+/// Found by running every Windows command in cmd, Windows PowerShell 5.1 and pwsh 7.
+#[test]
+fn test_powershell_resolution_avoids_cmd_only_syntax() {
+    use ezcmd::shell::Shell;
+
+    let cmd_only = |c: &str| {
+        c == "cd"
+            || c == "ver"
+            || c == "set"
+            || c.starts_with("set ")
+            || c.starts_with("cd /d ")
+            || c.starts_with("type nul")
+            || c.contains("/s /q")
+            || c.contains('%')
+    };
+    for tool in TOOLS {
+        for sec in tool.sections {
+            for cmd in sec.commands {
+                if let Some(ps) = cmd.resolve_for(Os::Windows, Shell::PowerShell) {
+                    assert!(
+                        !cmd_only(ps),
+                        "section {}: \"{ps}\" only works in cmd.exe; add a `powershell` key",
+                        sec.title
+                    );
+                }
+            }
+        }
+    }
+}
