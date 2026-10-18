@@ -120,13 +120,39 @@ fn test_help_tool_shell_only() {
 
 #[test]
 fn test_help_windows_view() {
+    // Pin the shell: on Windows the default is detected from the parent processes,
+    // and `cargo test` is often started from PowerShell.
     let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
-    cmd.args(["--help", "-windows"])
+    cmd.args(["--help", "-windows", "--shell", "cmd"])
         .assert()
         .success()
         .stdout(predicate::str::contains("rmdir /s /q <folder>"))
         .stdout(predicate::str::contains("type nul > <file>"))
         .stdout(predicate::str::contains("cls"));
+}
+
+#[test]
+fn test_help_windows_powershell_view() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--help", "-windows", "--shell", "powershell"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "Remove-Item -Recurse -Force <folder>",
+        ))
+        .stdout(predicate::str::contains("New-Item -ItemType File <file>"))
+        .stdout(predicate::str::contains("$env:Path"))
+        .stdout(predicate::str::contains("rmdir /s /q").not())
+        .stdout(predicate::str::contains("cls"));
+}
+
+#[test]
+fn test_shell_flag_invalid_exit_2() {
+    let mut cmd = Command::cargo_bin("ezcmd").expect("binary exists");
+    cmd.args(["--shell", "bash", "delete", "files"])
+        .assert()
+        .code(2)
+        .stderr(predicate::str::contains("unknown shell"));
 }
 
 #[test]
