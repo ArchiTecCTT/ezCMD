@@ -52,19 +52,36 @@ $OtherDriveDir = if ($scratchDrive -ieq 'D:') { Join-Path $env:TEMP ("ezb-c-" + 
 New-Item -ItemType Directory -Force -Path $OtherDriveDir | Out-Null
 
 # ---------------------------------------------------------------- resolved commands
-$helpText = & $Exe --plain --help -windows
-$helpText | Set-Content -Path (Join-Path $OutDir 'ezcmd-help-windows.txt') -Encoding utf8
-$Resolved = [System.Collections.Generic.List[object]]::new()
-$tool = $null; $section = $null
-foreach ($line in $helpText) {
-    if ($line -match '^TOOL: (.+)$') { $tool = $Matches[1]; continue }
-    if ($line -match '^# ---(.+)---$') { $section = $Matches[1]; continue }
-    if ($tool -and $line -match '^(.*?) --- (.*)$') {
-        $Resolved.Add([pscustomobject]@{ Tool = $tool; Section = $section; Template = $Matches[1]; Note = $Matches[2] })
+function Get-Resolved([string[]] $ShellArgs, [string] $Name) {
+    $text = & $Exe --plain @ShellArgs --help -windows
+    $text | Set-Content -Path (Join-Path $OutDir "ezcmd-help-windows-$Name.txt") -Encoding utf8
+    $list = [System.Collections.Generic.List[object]]::new()
+    $tool = $null; $section = $null
+    foreach ($line in $text) {
+        if ($line -match '^TOOL: (.+)$') { $tool = $Matches[1]; continue }
+        if ($line -match '^# ---(.+)---$') { $section = $Matches[1]; continue }
+        if ($tool -and $line -match '^(.*?) --- (.*)$') {
+            $list.Add([pscustomobject]@{ Tool = $tool; Section = $section; Template = $Matches[1]; Note = $Matches[2] })
+        }
     }
+    if ($list.Count -lt 50) { throw "Parsed only $($list.Count) commands from ezcmd --help -windows ($Name); parser broken?" }
+    , $list
 }
-if ($Resolved.Count -lt 50) { throw "Parsed only $($Resolved.Count) commands from ezcmd --help -windows; parser broken?" }
-Write-Host "Resolved $($Resolved.Count) Windows commands from ezcmd."
+# Builds with the PowerShell fix take --shell; older ones print one (Command Prompt) list.
+& $Exe --shell powershell --version *> $null
+$HasShellFlag = ($LASTEXITCODE -eq 0)
+if ($HasShellFlag) {
+    $CmdList = Get-Resolved @('--shell', 'cmd') 'cmd'
+    $PsList = Get-Resolved @('--shell', 'powershell') 'powershell'
+    $Notes.Add("This ezcmd build has ``--shell``: cmd runs the ``--shell cmd`` list, both PowerShells run the ``--shell powershell`` list.")
+} else {
+    $CmdList = Get-Resolved @() 'default'
+    $PsList = $CmdList
+    $Notes.Add("This ezcmd build has no ``--shell`` flag, so all three shells run the same list ezcmd prints on Windows.")
+}
+if ($CmdList.Count -ne $PsList.Count) { throw "cmd list has $($CmdList.Count) commands but PowerShell list has $($PsList.Count)" }
+$TemplatesFor = @{ cmd = $CmdList; winps = $PsList; pwsh = $PsList }
+Write-Host "Resolved $($CmdList.Count) Windows commands from ezcmd (--shell supported: $HasShellFlag)."
 
 # ---------------------------------------------------------------- helpers
 # Plain functions on purpose: an advanced function would swallow git's `-d` as -Debug.
@@ -125,6 +142,7 @@ try {
 # Setup: param($d) -> hashtable of extra tokens (optional). Runs with cwd = repo if it exists.
 # Verify: param($r) -> $true / $false / $null(not checkable) or @{ ok=..; detail=.. }
 # $r: Dir, Repo, Out, Err, Probe, Ctx
+$DnavSetup = { param($d) $t = Join-Path $DCmdRoot ("dnav-" + (Split-Path -Leaf $d)); New-Item -ItemType Directory -Force -Path $t | Out-Null; @{ dtarget = $t } }
 $Specs = @(
     # ---- Navigating Directories
     @{ T = 'cd'; Effect = 'prints the current directory'; Cwd = 'root'; Cmd = 'cd'
@@ -136,7 +154,7 @@ $Specs = @(
     @{ T = 'cd \'; Effect = 'shell is now at the drive root'; Cwd = 'root'; Cmd = 'cd \'; Probe = 'cwd'
         Verify = { param($r) $r.Probe -ieq ((Split-Path -Qualifier $r.Dir) + '\') } }
     @{ T = 'cd /d D:\<folder>'; Effect = 'shell switched to drive D: and the folder'; Cwd = 'otherdrive'; Cmd = 'cd /d {dtarget}'; Probe = 'cwd'
-        Setup = { param($d)  $t = Join-Path $DCmdRoot ("dnav-" + (Split-Path -Leaf $d)); New-Item -ItemType Directory -Force -Path $t | Out-Null; @{ dtarget = $t } }
+        Setup = $DnavSetup
         Verify = { param($r) $r.Probe -ieq $r.Ctx.dtarget } }
     @{ T = 'dir'; Effect = 'lists file.txt'; Cwd = 'root'; Cmd = 'dir'
         Verify = { param($r) $r.Out -match 'file\.txt' } }
@@ -224,6 +242,28 @@ $Specs = @(
     @{ T = 'echo %PATH%'; Effect = 'prints the PATH value'; Cwd = 'root'; Cmd = 'echo %PATH%'
         Verify = { param($r) ($r.Out -match '(?i)\\Windows') -and ($r.Out -notmatch '%PATH%') } }
     @{ T = 'set <NAME>=<value>'; Effect = 'env var EZB_NAME=ezvalue in this session'; Cwd = 'root'; Cmd = 'set EZB_NAME=ezvalue'; Probe = 'env'
+        Verify = { param($r) $r.Probe.Trim() -ceq 'ezvalue' } }
+    # ---- PowerShell forms (only printed by builds with --shell)
+    @{ T = 'pwd'; Effect = 'prints the current directory'; Cwd = 'root'; Cmd = 'pwd'
+        Verify = { param($r) $r.Out -match [regex]::Escape($r.Dir) } }
+    @{ T = 'cd D:\<folder>'; Effect = 'shell switched to drive D: and the folder'; Cwd = 'otherdrive'; Cmd = 'cd {dtarget}'; Probe = 'cwd'
+        Setup = $DnavSetup
+        Verify = { param($r) $r.Probe -ieq $r.Ctx.dtarget } }
+    @{ T = 'New-Item -ItemType File <file>'; Effect = 'empty file newfile.txt exists'; Cwd = 'root'; Cmd = 'New-Item -ItemType File newfile.txt'
+        Verify = { param($r)
+            $p = Join-Path $r.Dir 'newfile.txt'
+            if (-not (Test-Path $p)) { return @{ ok = $false; detail = 'file not created' } }
+            $len = (Get-Item $p).Length
+            @{ ok = ($len -eq 0); detail = "file created, $len bytes" } } }
+    @{ T = 'Remove-Item -Recurse -Force <folder>'; Effect = 'non-empty folder removed'; Cwd = 'root'; Cmd = 'Remove-Item -Recurse -Force fulldir'
+        Verify = { param($r) -not (Test-Path (Join-Path $r.Dir 'fulldir')) } }
+    @{ T = 'cmd /c ver'; Effect = 'prints the Windows version'; Cwd = 'root'; Cmd = 'cmd /c ver'
+        Verify = { param($r) $r.Out -match 'Microsoft Windows \[Version' } }
+    @{ T = 'Get-ChildItem Env:'; Effect = 'prints environment variables'; Cwd = 'root'; Cmd = 'Get-ChildItem Env:'
+        Verify = { param($r) $r.Out -match '(?im)^Path\s+\S' } }
+    @{ T = '$env:Path'; Effect = 'prints the PATH value'; Cwd = 'root'; Cmd = '$env:Path'
+        Verify = { param($r) ($r.Out -match '(?i)\\Windows') -and ($r.Out -notmatch '%PATH%') } }
+    @{ T = '$env:<NAME> = "<value>"'; Effect = 'env var EZB_NAME=ezvalue in this session'; Cwd = 'root'; Cmd = '$env:EZB_NAME = "ezvalue"'; Probe = 'env'
         Verify = { param($r) $r.Probe.Trim() -ceq 'ezvalue' } }
     # ---- Uninstalling ezcmd
     @{ T = 'ezcmd --uninstall'; Skip = 'not run: would uninstall ezcmd; identical binary call in every shell' }
@@ -474,16 +514,20 @@ function First-ErrorLine([string] $err) {
 $Results = [System.Collections.Generic.List[object]]::new()
 $seen = @{}
 $n = 0
-foreach ($rc in $Resolved) {
-    if ($seen.ContainsKey($rc.Template)) { continue }
-    $seen[$rc.Template] = $true
-    $spec = $SpecByT[$rc.Template]
-    $row = [ordered]@{ Tool = $rc.Tool; Section = $rc.Section; Template = $rc.Template; Note = $rc.Note; Command = $null; Effect = $null; Skip = $null; Shells = [ordered]@{} }
-    if (-not $spec) { $row.Skip = 'HARNESS GAP: no spec for this command'; $Results.Add([pscustomobject]$row); continue }
-    if ($spec.Skip) { $row.Skip = $spec.Skip; $row.Command = $rc.Template; $Results.Add([pscustomobject]$row); continue }
-    $row.Effect = $spec.Effect
+for ($idx = 0; $idx -lt $CmdList.Count; $idx++) {
+    $rcCmd = $CmdList[$idx]; $rcPs = $PsList[$idx]
+    $key = $rcCmd.Template + "`n" + $rcPs.Template
+    if ($seen.ContainsKey($key)) { continue }
+    $seen[$key] = $true
+    $row = [ordered]@{ Tool = $rcCmd.Tool; Section = $rcCmd.Section; Template = $rcCmd.Template; PsTemplate = $rcPs.Template; Note = $rcCmd.Note; Commands = [ordered]@{}; Effect = $null; Skip = $null; Shells = [ordered]@{} }
+    $missing = @(@($rcCmd.Template, $rcPs.Template) | Select-Object -Unique | Where-Object { -not $SpecByT[$_] })
+    if ($missing) { $row.Skip = "HARNESS GAP: no spec for $($missing -join ', ')"; $Results.Add([pscustomobject]$row); continue }
+    if ($SpecByT[$rcCmd.Template].Skip) { $row.Skip = $SpecByT[$rcCmd.Template].Skip; $Results.Add([pscustomobject]$row); continue }
+    $row.Effect = $SpecByT[$rcCmd.Template].Effect
 
     foreach ($sh in $Shells.Keys) {
+        $rc = $TemplatesFor[$sh][$idx]
+        $spec = $SpecByT[$rc.Template]
         $n++
         $dir = Join-Path $Base ("t{0:d3}-{1}" -f $n, $sh)
         Copy-Item -Recurse -Force $Template $dir
@@ -502,7 +546,7 @@ foreach ($rc in $Resolved) {
         # sanity: the concrete command must have the exact shape ezcmd printed
         $shape = '^' + (([regex]::Escape($rc.Template)) -replace '<[^>]+>', '.+') + '$'
         if ($cmdText -notmatch $shape) { throw "Spec command '$cmdText' does not match template '$($rc.Template)'" }
-        $row.Command = $cmdText -replace [regex]::Escape($dir), '<scratch>' -replace [regex]::Escape(($dir -replace '\\', '/')), '<scratch>'
+        $row.Commands[$sh] = $cmdText -replace [regex]::Escape($dir), '<scratch>' -replace [regex]::Escape(($dir -replace '\\', '/')), '<scratch>'
 
         $cwd = switch ($spec.Cwd) {
             'root' { $dir } 'repo' { $repo } 'nav' { Join-Path $dir 'navtarget' } 'newproj' { Join-Path $dir 'newproj' }
@@ -551,7 +595,7 @@ $osv = (cmd /d /c ver | Out-String).Trim()
 [void]$md.AppendLine()
 [void]$md.AppendLine("Runner: $osv · Windows PowerShell $psv · pwsh $pwv · $(git --version)")
 [void]$md.AppendLine()
-[void]$md.AppendLine("Every command is the exact text ``ezcmd --help -windows`` printed (placeholders filled), run alone in a fresh scratch copy, as ``cmd /d /s /c ""<command>""``, ``powershell -NoProfile -Command <command>`` and ``pwsh -NoProfile -Command <command>``. Stdin is closed (no keyboard). ✅ = no error and the effect was verified; ❌ **silent** = shell reported success but nothing happened.")
+[void]$md.AppendLine("Every command is the exact text ``ezcmd --help -windows`` printed for that shell (placeholders filled; ``PS:`` marks a PowerShell-specific form), run alone in a fresh scratch copy, as ``cmd /d /s /c ""<command>""``, ``powershell -NoProfile -Command <command>`` and ``pwsh -NoProfile -Command <command>``. Stdin is closed (no keyboard). ✅ = no error and the effect was verified; ❌ **silent** = shell reported success but nothing happened.")
 [void]$md.AppendLine()
 [void]$md.AppendLine('| # | Command (as run) | Intended effect | cmd | Windows PowerShell | pwsh | Error snippet |')
 [void]$md.AppendLine('|---|---|---|---|---|---|---|')
@@ -571,7 +615,9 @@ foreach ($r in $Results) {
             $snips += "**${label}:** $(Esc $line)"
         }
     }
-    [void]$md.AppendLine("| $i | ``$(Esc $r.Command)`` | $(Esc $r.Effect) | $(Cell $r.Shells.cmd) | $(Cell $r.Shells.winps) | $(Cell $r.Shells.pwsh) | $($snips -join '<br>') |")
+    $shown = "``$(Esc $r.Commands.cmd)``"
+    if ($r.Commands.winps -ne $r.Commands.cmd) { $shown += "<br>PS: ``$(Esc $r.Commands.winps)``" }
+    [void]$md.AppendLine("| $i | $shown | $(Esc $r.Effect) | $(Cell $r.Shells.cmd) | $(Cell $r.Shells.winps) | $(Cell $r.Shells.pwsh) | $($snips -join '<br>') |")
 }
 [void]$md.AppendLine()
 $count = @{ cmd = 0; winps = 0; pwsh = 0 }; $tested = 0
@@ -597,7 +643,7 @@ foreach ($r in $Results) {
     if ($r.Skip) { continue }
     foreach ($sh in $r.Shells.Keys) {
         $s = $r.Shells[$sh]
-        [void]$detail.AppendLine("===== [$sh] $($r.Command)  ok=$($s.Ok) code=$($s.Code) exit=$($s.ExitCode) effect=$($s.Effect) timeout=$($s.TimedOut) probe=$($s.Probe)")
+        [void]$detail.AppendLine("===== [$sh] $($r.Commands[$sh])  ok=$($s.Ok) code=$($s.Code) exit=$($s.ExitCode) effect=$($s.Effect) timeout=$($s.TimedOut) probe=$($s.Probe)")
         if ($s.Out) { [void]$detail.AppendLine('--- stdout'); [void]$detail.AppendLine(($s.Out.Substring(0, [Math]::Min(1500, $s.Out.Length)))) }
         if ($s.Err) { [void]$detail.AppendLine('--- stderr'); [void]$detail.AppendLine($s.Err) }
     }
@@ -608,4 +654,4 @@ if ($SubstUsed) { subst D: /d }
 Get-Process ezbsleep -ErrorAction SilentlyContinue | Stop-Process -Force
 Write-Host $mdText
 $gaps = @($Results | Where-Object { $_.Skip -like 'HARNESS GAP*' })
-if ($gaps.Count) { throw "Harness gap: no spec for $($gaps.Template -join ', ')" }
+if ($gaps.Count) { throw "Harness gap: $($gaps.Skip -join '; ')" }

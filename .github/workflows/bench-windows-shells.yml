@@ -5,12 +5,30 @@ name: bench-windows-shells
 on:
   workflow_dispatch:
   push:
-    branches: [bench/windows-shells]
+    branches: [bench/windows-shells, bench/windows-shells-fixed]
 
 permissions:
   contents: read
 
 jobs:
+  # Same checks as the repo's ci.yml (which only runs on main and PRs).
+  ci:
+    name: Check & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test --all-targets
+      - run: cargo build --release
+
   bench:
     runs-on: windows-latest
     timeout-minutes: 60
