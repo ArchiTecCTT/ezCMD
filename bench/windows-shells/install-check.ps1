@@ -37,6 +37,8 @@ $id = [Security.Principal.WindowsIdentity]::GetCurrent()
 "----- installer output -----"
 if ($Mode -eq 'file') {
     & "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File 'C:\ezb-install\pkg\install.ps1' 2>&1 | Out-String
+} elseif ($Mode -eq 'pwshfile') {
+    & "$env:ProgramFiles\PowerShell\7\pwsh.exe" -NoProfile -ExecutionPolicy Bypass -File 'C:\ezb-install\pkg\install.ps1' 2>&1 | Out-String
 } else {
     & "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -Command 'irm https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.ps1 | iex' 2>&1 | Out-String
 }
@@ -81,19 +83,36 @@ function Invoke-AsStandardUser([string] $User, [string] $Mode) {
     $kv
 }
 
+function Invoke-AsRunner([string] $Mode) {
+    $text = & "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File "$Root\child.ps1" -Mode $Mode 2>&1 | Out-String
+    Set-Content -Path (Join-Path $OutDir "install-$Mode-elevated.log") -Value $text -Encoding utf8
+    Write-Host "===== install as runner admin ($Mode) =====`n$text"
+    $kv = @{}
+    foreach ($line in $text -split "`r?`n") { if ($line -match '^([A-Z_]+)=(.*)$') { $kv[$Matches[1]] = $Matches[2].Trim() } }
+    $kv['MODE'] = $Mode
+    $kv
+}
+
 $rows = @()
 $rows += Invoke-AsStandardUser 'ezbstd1' 'file'
+$rows += Invoke-AsStandardUser 'ezbstd3' 'pwshfile'
 $rows += Invoke-AsStandardUser 'ezbstd2' 'irm'
+# Control: same -File run as the elevated runner admin, to separate "needs admin" from other failures.
+$rows += Invoke-AsRunner 'file'
 
 $md = [System.Text.StringBuilder]::new()
 [void]$md.AppendLine('## install.ps1 as a standard (non-admin) user')
 [void]$md.AppendLine()
-[void]$md.AppendLine("The runner account itself ($($me.Name)) is an elevated admin ($meAdmin), so each install ran as a newly created local user that is **not** in Administrators, started via CreateProcessWithLogon with its profile loaded.")
+[void]$md.AppendLine("The runner account itself ($($me.Name)) is an elevated admin ($meAdmin), so each install ran as a newly created local user that is **not** in Administrators, started via CreateProcessWithLogon with its profile loaded. The last row is a control run as the elevated runner admin.")
 [void]$md.AppendLine()
 [void]$md.AppendLine('| How | User | Admin? | Integrity | Installer exit | ezcmd.exe in ~\.local\bin | marker in %APPDATA% | User PATH updated | `ezcmd --version` |')
 [void]$md.AppendLine('|---|---|---|---|---|---|---|---|---|')
 foreach ($r in $rows) {
-    $how = if ($r.MODE -eq 'file') { '`powershell -ExecutionPolicy Bypass -File install.ps1` (checkout)' } else { '`irm .../main/install.ps1 \| iex` (README one-liner)' }
+    $how = switch ($r.MODE) {
+        'file' { '`powershell -ExecutionPolicy Bypass -File install.ps1` (5.1, checkout)' }
+        'pwshfile' { '`pwsh -ExecutionPolicy Bypass -File install.ps1` (7, checkout)' }
+        default { '`irm .../main/install.ps1 \| iex` (README one-liner, 5.1)' }
+    }
     [void]$md.AppendLine("| $how | $($r.USER) | $($r.IS_ADMIN) | $($r.INTEGRITY) | $($r.INSTALL_EXIT) | $($r.EXE_PRESENT) | $($r.MARKER_PRESENT) | $($r.USER_PATH_HAS_BIN) | $($r.VERSION) |")
 }
 $text = $md.ToString()
@@ -101,4 +120,4 @@ Set-Content -Path (Join-Path $OutDir 'install.md') -Value $text -Encoding utf8
 if ($env:GITHUB_STEP_SUMMARY) { Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $text -Encoding utf8 }
 Write-Host $text
 
-foreach ($u in 'ezbstd1', 'ezbstd2') { net user $u /delete | Out-Null }
+foreach ($u in 'ezbstd1', 'ezbstd2', 'ezbstd3') { net user $u /delete | Out-Null }

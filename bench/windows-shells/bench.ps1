@@ -67,17 +67,16 @@ if ($Resolved.Count -lt 50) { throw "Parsed only $($Resolved.Count) commands fro
 Write-Host "Resolved $($Resolved.Count) Windows commands from ezcmd."
 
 # ---------------------------------------------------------------- helpers
+# Plain functions on purpose: an advanced function would swallow git's `-d` as -Debug.
 function G {
     # git for fixtures/verification, in the current test's environment
-    param([Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs)
-    $out = & git @GitArgs 2>&1
-    if ($LASTEXITCODE -ne 0) { throw "fixture git $($GitArgs -join ' ') failed: $out" }
+    $out = & git @args 2>&1
+    if ($LASTEXITCODE -ne 0) { throw "fixture git $($args -join ' ') failed: $out" }
     $out
 }
 function GQ {
     # git query that may fail; returns $null on failure
-    param([Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs)
-    $out = & git @GitArgs 2>$null
+    $out = & git @args 2>$null
     if ($LASTEXITCODE -ne 0) { return $null }
     ($out -join "`n").Trim()
 }
