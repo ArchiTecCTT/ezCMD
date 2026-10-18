@@ -60,7 +60,10 @@ if ($UserPath -notlike "*$InstallDir*") {
 }
 
 Write-Host ""
-Write-Host "✓ ezcmd was successfully installed to $ExePath!" -ForegroundColor Green
+# Keep this file ASCII-only: Windows PowerShell 5.1 reads a BOM-less file as
+# Windows-1252, so any UTF-8 character here breaks `powershell -File install.ps1`.
+$Check = [char]0x2713
+Write-Host "$Check ezcmd was successfully installed to $ExePath!" -ForegroundColor Green
 Write-Host ""
 
 try {
