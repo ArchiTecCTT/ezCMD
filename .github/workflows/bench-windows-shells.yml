@@ -1,0 +1,54 @@
+# chore(bench): DO NOT UPSTREAM
+# Benchmarks which of ezcmd's Windows commands work in cmd.exe vs Windows PowerShell 5.1 vs pwsh.
+name: bench-windows-shells
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [bench/windows-shells]
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Versions
+        shell: pwsh
+        run: |
+          cmd /d /c ver
+          powershell -NoProfile -Command '"Windows PowerShell " + $PSVersionTable.PSVersion'
+          "pwsh " + $PSVersionTable.PSVersion
+          git --version
+          Get-PSDrive -PSProvider FileSystem | Format-Table Name, Root
+          "RUNNER_TEMP=$env:RUNNER_TEMP  TEMP=$env:TEMP"
+
+      - name: What ezcmd prints in each shell
+        shell: pwsh
+        run: ./bench/windows-shells/queries.ps1 -Exe target/release/ezcmd.exe -OutDir bench-out
+
+      - name: Run every Windows command in cmd / Windows PowerShell / pwsh
+        shell: pwsh
+        run: ./bench/windows-shells/bench.ps1 -Exe target/release/ezcmd.exe -OutDir bench-out
+
+      - name: install.ps1 as a non-admin user
+        if: always()
+        shell: pwsh
+        run: ./bench/windows-shells/install-check.ps1 -Exe target/release/ezcmd.exe -Installer install.ps1 -OutDir bench-out
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-windows-shells
+          path: bench-out/
