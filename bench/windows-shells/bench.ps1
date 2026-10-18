@@ -459,12 +459,15 @@ function Invoke-InShell {
 }
 
 function First-ErrorLine([string] $err) {
-    $lines = @($err -split "`r?`n" | ForEach-Object { $_.Trim() } |
-        Where-Object { $_ -and $_ -notmatch '^(At line|At char|\+|~|\||Line \||CategoryInfo|FullyQualifiedErrorId)' })
-    if (-not $lines) { return $null }
-    # pwsh may print "Cmdlet:" and the message on separate lines
-    if ($lines[0] -match ':$' -and $lines.Count -gt 1) { return "$($lines[0]) $($lines[1])" }
-    $lines[0]
+    $all = @($err -split "`r?`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    if (-not $all) { return $null }
+    # pwsh ConciseView: "Cmdlet:" / "Line |" / "2 |  <source>" / "|  ~~~" / "| <message>"
+    if ($all[0] -match '^(\S+):$') {
+        $msg = $all | Where-Object { $_ -match '^\|\s+(.*)$' -and $Matches[1] -notmatch '^~+$' } | Select-Object -Last 1
+        if ($msg) { return "$($all[0]) $($msg -replace '^\|\s+', '')" }
+    }
+    $lines = @($all | Where-Object { $_ -notmatch '^(At line|At char|\+|~|\||Line \||\d+ \||CategoryInfo|FullyQualifiedErrorId)' })
+    if ($lines) { $lines[0] } else { $all[0] }
 }
 
 # ---------------------------------------------------------------- main loop

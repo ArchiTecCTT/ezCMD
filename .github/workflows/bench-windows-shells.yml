@@ -46,6 +46,11 @@ jobs:
         shell: pwsh
         run: ./bench/windows-shells/install-check.ps1 -Exe target/release/ezcmd.exe -Installer install.ps1 -OutDir bench-out
 
+      - name: Print full report
+        if: always()
+        shell: pwsh
+        run: Get-Content bench-out/queries.md, bench-out/results.md, bench-out/install.md -ErrorAction SilentlyContinue
+
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
