@@ -6,8 +6,9 @@ aliases = ["change directory", "cd commands", "switch directory", "navigate fold
 
   [[section.command]]
   note    = "Shows current working directory"
-  windows = "cd"
-  unix    = "pwd"
+  windows    = "cd"
+  powershell = "pwd"
+  unix       = "pwd"
 
   [[section.command]]
   note = "Changes to specified folder"
@@ -24,7 +25,8 @@ aliases = ["change directory", "cd commands", "switch directory", "navigate fold
 
   [[section.command]]
   note    = "Switches active drive and enters folder"
-  windows = "cd /d D:\\<folder>"
+  windows    = "cd /d D:\\<folder>"
+  powershell = "cd D:\\<folder>"
 
   [[section.command]]
   note    = "Lists files and details in directory"
@@ -50,8 +52,9 @@ aliases = ["create folder", "make file", "create file", "new folder", "touch fil
 
   [[section.command]]
   note    = "Creates a new empty file"
-  windows = "type nul > <file>"
-  unix    = "touch <file>"
+  windows    = "type nul > <file>"
+  powershell = "New-Item -ItemType File <file>"
+  unix       = "touch <file>"
 
 [[section]]
 title   = "Removing Folders & Files"
@@ -63,8 +66,9 @@ aliases = ["delete folder", "remove directory", "delete file", "remove files"]
 
   [[section.command]]
   note    = "Removes a folder and all its contents"
-  windows = "rmdir /s /q <folder>"
-  unix    = "rm -rf <folder>"
+  windows    = "rmdir /s /q <folder>"
+  powershell = "Remove-Item -Recurse -Force <folder>"
+  unix       = "rm -rf <folder>"
 
   [[section.command]]
   note    = "Deletes a file"
@@ -120,9 +124,10 @@ aliases = ["system info", "os version", "check hostname", "whoami", "system spec
 
   [[section.command]]
   note    = "Displays operating system version information"
-  windows = "ver"
-  linux   = "uname -a"
-  macos   = "sw_vers"
+  windows    = "ver"
+  powershell = "cmd /c ver"
+  linux      = "uname -a"
+  macos      = "sw_vers"
 
   [[section.command]]
   note = "Shows current system host name"
@@ -186,18 +191,21 @@ aliases = ["env variables", "show path", "set variable", "export variable", "pri
 
   [[section.command]]
   note    = "Prints all current environment variables"
-  windows = "set"
-  unix    = "printenv"
+  windows    = "set"
+  powershell = "Get-ChildItem Env:"
+  unix       = "printenv"
 
   [[section.command]]
   note    = "Displays configured executable search paths"
-  windows = "echo %PATH%"
-  unix    = "echo $PATH"
+  windows    = "echo %PATH%"
+  powershell = "$env:Path"
+  unix       = "echo $PATH"
 
   [[section.command]]
   note    = "Sets an environment variable for current session"
-  windows = "set <NAME>=<value>"
-  unix    = "export <NAME>=<value>"
+  windows    = "set <NAME>=<value>"
+  powershell = "$env:<NAME> = \"<value>\""
+  unix       = "export <NAME>=<value>"
 
 [[section]]
 title   = "Uninstalling ezcmd"

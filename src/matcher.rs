@@ -1,5 +1,6 @@
 use crate::model::{Section, Tool};
 use crate::os::Os;
+use crate::shell::Shell;
 
 pub const W_TITLE: f32 = 1.00;
 pub const W_ALIAS: f32 = 0.95;
@@ -133,10 +134,11 @@ fn field_score(query_tokens: &[String], field_tokens: &[String]) -> f32 {
     sum / query_tokens.len() as f32
 }
 
-/// Search sections across tools for the given OS.
+/// Search sections across tools for the given OS (and Windows shell).
 pub fn search<'a>(
     tools: &'a [Tool],
     os: Os,
+    shell: Shell,
     query: &str,
     only_tool: Option<&str>,
 ) -> SearchResult<'a> {
@@ -155,7 +157,7 @@ pub fn search<'a>(
         }
 
         for (section_idx, section) in tool.sections.iter().enumerate() {
-            if !section.available_on(os) {
+            if !section.available_for(os, shell) {
                 continue;
             }
 
@@ -177,7 +179,7 @@ pub fn search<'a>(
             let resolved_cmds: Vec<&str> = section
                 .commands
                 .iter()
-                .filter_map(|c| c.resolve(os))
+                .filter_map(|c| c.resolve_for(os, shell))
                 .collect();
             let joined_cmds = resolved_cmds.join(" ");
             let cmd_tokens = tokenize(&joined_cmds);

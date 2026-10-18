@@ -4,6 +4,7 @@ use ezcmd::matcher::{self, SearchResult};
 use ezcmd::os::Os;
 use ezcmd::prompt;
 use ezcmd::render::{self, RenderCtx};
+use ezcmd::shell::Shell;
 use ezcmd::term;
 use std::io::{self, IsTerminal, Write};
 
@@ -39,6 +40,10 @@ fn print_usage_header<W: Write>(w: &mut W, ctx: &RenderCtx) -> io::Result<()> {
     )?;
     writeln!(
         w,
+        "  ezcmd --shell <cmd|powershell> <query> Pick the Windows shell (default: detected)"
+    )?;
+    writeln!(
+        w,
         "  ezcmd --install                        Install ezcmd to PATH"
     )?;
     writeln!(
@@ -69,6 +74,7 @@ fn run<W: Write>(args: &[String], out: &mut W) -> io::Result<i32> {
         color: is_color,
         plain: is_plain,
         width,
+        shell: invocation.shell.unwrap_or_else(Shell::detect),
     };
 
     match invocation.action {
@@ -90,7 +96,7 @@ fn run<W: Write>(args: &[String], out: &mut W) -> io::Result<i32> {
         }
         Action::Query(query) => {
             let os = Os::current();
-            let search_res = matcher::search(TOOLS, os, &query, None);
+            let search_res = matcher::search(TOOLS, os, render_ctx.shell, &query, None);
 
             match search_res {
                 SearchResult::Single(hit) => {
@@ -150,7 +156,13 @@ fn run<W: Write>(args: &[String], out: &mut W) -> io::Result<i32> {
 
             // If a specific section query is requested: `--help -<tool> -<section>`
             if let Some(sec_query) = opt_section {
-                let search_res = matcher::search(TOOLS, target_os, &sec_query, opt_tool.as_deref());
+                let search_res = matcher::search(
+                    TOOLS,
+                    target_os,
+                    render_ctx.shell,
+                    &sec_query,
+                    opt_tool.as_deref(),
+                );
 
                 match search_res {
                     SearchResult::Single(hit) => {
@@ -223,7 +235,7 @@ fn run<W: Write>(args: &[String], out: &mut W) -> io::Result<i32> {
                     let available_sections: Vec<_> = tool
                         .sections
                         .iter()
-                        .filter(|s| s.available_on(target_os))
+                        .filter(|s| s.available_for(target_os, render_ctx.shell))
                         .collect();
 
                     if available_sections.is_empty() {

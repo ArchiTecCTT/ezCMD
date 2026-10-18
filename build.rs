@@ -25,6 +25,7 @@ struct RawCommand {
     cmd: Option<String>,
     unix: Option<String>,
     windows: Option<String>,
+    powershell: Option<String>,
     linux: Option<String>,
     macos: Option<String>,
 }
@@ -164,6 +165,7 @@ fn validate_tool_file(
                 ("cmd", &cmd.cmd),
                 ("unix", &cmd.unix),
                 ("windows", &cmd.windows),
+                ("powershell", &cmd.powershell),
                 ("linux", &cmd.linux),
                 ("macos", &cmd.macos),
             ];
@@ -171,7 +173,7 @@ fn validate_tool_file(
             let has_any_cmd = cmd_strings.iter().any(|(_, opt)| opt.is_some());
             if !has_any_cmd {
                 return Err(format!(
-                    "{path_display}: section \"{}\": command must specify at least one of cmd, unix, windows, linux, macos",
+                    "{path_display}: section \"{}\": command must specify at least one of cmd, unix, windows, powershell, linux, macos",
                     sec.title
                 ));
             }
@@ -237,6 +239,10 @@ fn generate_content_rs(tools: &[RawToolFile]) -> String {
                 out.push_str(&format!(
                     "                        windows: {},\n",
                     emit_option_str(&cmd.windows)
+                ));
+                out.push_str(&format!(
+                    "                        powershell: {},\n",
+                    emit_option_str(&cmd.powershell)
                 ));
                 out.push_str(&format!(
                     "                        linux: {},\n",

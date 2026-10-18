@@ -5,6 +5,7 @@ pub mod model;
 pub mod os;
 pub mod prompt;
 pub mod render;
+pub mod shell;
 pub mod term;
 pub mod uninstall;
 pub mod welcome;
