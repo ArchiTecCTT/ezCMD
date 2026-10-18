@@ -68,7 +68,8 @@ function Get-Resolved([string[]] $ShellArgs, [string] $Name) {
     , $list
 }
 # Builds with the PowerShell fix take --shell; older ones print one (Command Prompt) list.
-& $Exe --shell powershell --version *> $null
+# Probe with --help: older builds answer --version before rejecting unknown flags.
+& $Exe --plain --shell powershell --help -windows *> $null
 $HasShellFlag = ($LASTEXITCODE -eq 0)
 if ($HasShellFlag) {
     $CmdList = Get-Resolved @('--shell', 'cmd') 'cmd'
