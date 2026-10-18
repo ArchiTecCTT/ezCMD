@@ -116,7 +116,7 @@ curl -fsSL https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.sh | ba
 
 #### Windows (PowerShell)
 
-Open PowerShell as Administrator and run:
+Open PowerShell (Administrator rights are not needed) and run:
 
 ```powershell
 irm https://raw.githubusercontent.com/ItzEvhyx/ezCMD/main/install.ps1 | iex
